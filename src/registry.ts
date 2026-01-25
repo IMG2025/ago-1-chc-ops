@@ -1,3 +1,11 @@
+// --- type branding (authorize hardening) ---
+type Brand<K, T> = K & { __brand: T };
+type DomainId = Brand<string, "DomainId">;
+type ScopeString = Brand<string, "ScopeString">;
+type TaskTypeId = Brand<string, "TaskTypeId">;
+// --- end branding ---
+
+
 import { chcOpsError, getTaskType } from "./errors.js";
 
 function validateScopeNamespaces(spec: ExecutorSpec) {
@@ -117,17 +125,21 @@ export class DomainRegistry {
    * Sentinel-aligned gate: validates task support + required scopes.
    * Deterministic. Throws with stable CHC Ops error codes.
    */
-  authorize(domain_id: string, task: any, scope: string): void {
-    const spec = this.get(domain_id);
-    if (!spec) throw chcOpsError("UNKNOWN_DOMAIN", { domain_id });
-
-
-    
-    const taskType = getTaskType(task);
+  authorize(
+  domain_id: DomainId,
+  task: unknown,
+  scope: ScopeString
+): void {
+  const taskType = getTaskType(task);
 
 
     // RUNTIME_AUTH_HARDENING_GATE:
     // Defense-in-depth: re-assert spec invariants at decision time.
+    const spec = this.byDomain.get(domain_id);
+    if (!spec) {
+      throw chcOpsError("UNKNOWN_DOMAIN", { domain_id });
+    }
+
     validateScopeNamespaces(spec);
     validateActionScopesSubset(spec);
 
