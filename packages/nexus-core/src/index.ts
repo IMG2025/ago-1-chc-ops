@@ -12,3 +12,6 @@ export type {
 
 export { defaultOrchestrator } from "./orchestrator.js";
 
+export type { NexusTaskEnvelope, SentinelRegistrar, SentinelGateway, NexusMountFn } from "./handshake.js";
+
+export { mountPluginsIntoSentinel } from "./handshake.js";
