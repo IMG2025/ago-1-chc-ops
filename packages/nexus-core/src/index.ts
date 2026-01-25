@@ -1,4 +1,5 @@
 // Canonical Public Surface (v1)
+// NOTE: This file is composed. Do not overwrite handshake exports.
 export type {
   DomainId,
   ExecutorId,
@@ -13,6 +14,6 @@ export type {
 export { defaultRoutingPolicy } from "./orchestration.js";
 export { NexusOrchestrator } from "./orchestrator_v1.js";
 
-export type { HandshakeRequest, HandshakeDecision } from "./handshake.js";
-export type { GovernanceGateway } from "./handshake.js";
-// handshake-audit-required: Handshake | GovernanceGateway
+// Handshake surface (explicit; audit-gated)
+export type { GovernanceGateway, HandshakeDecision, HandshakeRequest } from "./handshake.js";
+// HANDSHAKE_EXPORTS_EXPLICIT

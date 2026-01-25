@@ -1,4 +1,29 @@
-import type {
+#!/usr/bin/env node
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
+
+function run(cmd) { execSync(cmd, { stdio: "inherit" }); }
+function read(p) { return fs.readFileSync(p, "utf8"); }
+function writeIfChanged(p, next) {
+  const prev = fs.existsSync(p) ? read(p) : "";
+  if (prev !== next) fs.writeFileSync(p, next);
+}
+function ensureDir(d) { fs.mkdirSync(d, { recursive: true }); }
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+process.chdir(ROOT);
+
+const GEN = "scripts/patch_step_7_lock_nexus_orchestration_v2.mjs";
+const ORCH = "packages/nexus-core/src/orchestrator_v1.ts";
+const PKG = "packages/nexus-core";
+
+if (!fs.existsSync(GEN)) throw new Error(`Missing: ${GEN}`);
+if (!fs.existsSync(PKG)) throw new Error(`Missing: ${PKG}`);
+
+ensureDir(path.dirname(ORCH));
+
+const canonicalOrchestratorV1 = `import type {
   ExecutorAdapter,
   Orchestrator,
   OrchestrationResult,
@@ -72,3 +97,37 @@ export class NexusOrchestrator implements Orchestrator {
     }
   }
 }
+`;
+
+writeIfChanged(ORCH, canonicalOrchestratorV1.trimEnd() + "\n");
+
+// Patch generator to emit this exact canonical content (no regex splicing).
+let g = read(GEN);
+
+const marker = "const orchestratorImplTs = `";
+const start = g.indexOf(marker);
+if (start < 0) throw new Error("Invariant: could not find orchestratorImplTs in generator.");
+
+const tplStart = start + marker.length;
+const tplEnd = g.indexOf("`;", tplStart);
+if (tplEnd < 0) throw new Error("Invariant: could not find end of orchestratorImplTs template in generator.");
+
+const escapedForTemplate = canonicalOrchestratorV1
+  .replace(/`/g, "\\`"); // protect template literal
+
+const nextG =
+  g.slice(0, tplStart) +
+  escapedForTemplate +
+  g.slice(tplEnd);
+
+writeIfChanged(GEN, nextG);
+
+console.log("OK: Step 7 restored canonical orchestrator_v1.ts and pinned generator template (syntax-safe, strict-safe).");
+
+// Re-run Step 7 generator twice for idempotency and to ensure it does not re-break anything
+run("node scripts/patch_step_7_lock_nexus_orchestration_v2.mjs");
+run("node scripts/patch_step_7_lock_nexus_orchestration_v2.mjs");
+
+// Full gates
+run("npm test");
+run("npm run build");

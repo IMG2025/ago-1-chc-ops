@@ -21,9 +21,7 @@ const env: TaskEnvelope = {
 };
 
 const res = await orch.dispatch(env);
-
 if (res.status !== "SUCCEEDED") {
   throw new Error("FAIL: nexus-core smoke expected SUCCEEDED");
 }
-
 console.log("OK: nexus-core smoke orchestration v1 => SUCCEEDED");

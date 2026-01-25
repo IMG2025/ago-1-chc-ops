@@ -3,3 +3,9 @@ dist/
 .env
 # scratch scripts
 scripts/tmp-*.mjs
+
+# Termux-safe temp dir used by audits
+.tmp/
+
+.tmp
+scripts/_attic/
