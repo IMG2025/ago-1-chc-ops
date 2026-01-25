@@ -43,3 +43,5 @@ grep -qE 'export\s+function\s+mountCHCOpsPlugins\s*\(' "$PLUGIN" \
 
 echo "OK: sentinel-core frozen surface audit passed."
 npm run build
+./scripts/audit_sentinel_policy_binding_frozen_surface.sh
+./scripts/audit_sentinel_policy_binding_termux_bridge_v1.sh

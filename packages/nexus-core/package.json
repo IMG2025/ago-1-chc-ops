@@ -16,6 +16,6 @@
     "smoke": "node ./dist/diagnostics/smoke.js"
   },
   "dependencies": {
-    "@chc/sentinel-core": "workspace:*"
+    "@chc/sentinel-core": "*"
   }
 }

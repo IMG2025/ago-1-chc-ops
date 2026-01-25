@@ -12,7 +12,7 @@
     "ago-1-core": "file:../ago-1-core/ago-1-core-0.1.0.tgz",
     "ciag-ago-1": "file:../ciag-ago-1",
     "hospitality-ago-1": "file:../../hospitality-ago-1",
-    "@chc/sentinel-core": "workspace:*"
+    "@chc/sentinel-core": "*"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
