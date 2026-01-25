@@ -1,38 +1,61 @@
-import type { ExecutorSpec, TaskType } from "@chc/sentinel-core";
+/**
+ * Nexus Core — Orchestration Contract (Public Surface v1)
+ *
+ * Guardrail: this file defines the ONLY stable orchestration seam.
+ * - No deep-import consumers should rely on internals outside index.ts.
+ * - Keep types minimal and forward-compatible.
+ */
+
+export type TaskId = string;
+export type DomainId = string;
+export type TaskType = string;
 
 /**
- * Nexus Core (v0): orchestration contract.
- * This is intentionally minimal: we define the shape we will grow into.
+ * Minimal envelope that Nexus can route and orchestrate.
+ * We keep payload unknown to avoid coupling to domain internals.
  */
-export type OrchestrationRequest = Readonly<{
-  domain_id: string;
+export interface TaskEnvelope {
+  task_id: TaskId;
+  domain_id: DomainId;
   task_type: TaskType;
-  input: unknown;
-  scopes: readonly string[];
-}>;
-
-export type OrchestrationResult = Readonly<{
-  ok: true;
-  output: unknown;
-}> | Readonly<{
-  ok: false;
-  code: string;
-  meta?: Record<string, unknown>;
-}>;
-
-/**
- * A registry surface Nexus expects.
- * Sentinel-core implements a compatible registry; we keep Nexus decoupled.
- */
-export type ExecutorLookup = (domain_id: string) => ExecutorSpec | undefined;
-
-/**
- * Minimal orchestrate function (no runtime coupling yet).
- * We will replace this with policy-driven routing + audit trails.
- */
-export function orchestrate(getExecutor: ExecutorLookup, req: OrchestrationRequest): OrchestrationResult {
-  const spec = getExecutor(req.domain_id);
-  if (!spec) return { ok: false, code: "UNKNOWN_DOMAIN", meta: { domain_id: req.domain_id } };
-  // NOTE: no execution here yet; Nexus will route to domain executors later.
-  return { ok: true, output: { routed: spec.executor_id, task_type: req.task_type } };
+  payload: unknown;
+  /**
+   * Optional scope/context for governance layers (Sentinel).
+   * Nexus itself should not authorize; it should consume an already-authorized call path.
+   */
+  scopes?: readonly string[];
+  meta?: Readonly<Record<string, unknown>>;
 }
+
+/**
+ * Minimal orchestration result. Payload remains unknown to avoid coupling.
+ */
+export interface OrchestrationResult {
+  task_id: TaskId;
+  status: "OK" | "ERROR";
+  output?: unknown;
+  error?: {
+    code: string;
+    message: string;
+    meta?: Readonly<Record<string, unknown>>;
+  };
+}
+
+/**
+ * Orchestrator interface — the stable behavioral surface.
+ */
+export interface Orchestrator {
+  orchestrate(task: TaskEnvelope): Promise<OrchestrationResult> | OrchestrationResult;
+}
+
+/**
+ * Minimal default orchestrator (placeholder).
+ * This ensures the package compiles and provides a usable object for smoke tests,
+ * without asserting runtime behavior beyond contract shape.
+ */
+export const defaultOrchestrator: Orchestrator = {
+  orchestrate(task: TaskEnvelope): OrchestrationResult {
+    return { task_id: task.task_id, status: "ERROR", error: { code: "NOT_IMPLEMENTED", message: "Nexus orchestrator not implemented." } };
+  },
+};
+
