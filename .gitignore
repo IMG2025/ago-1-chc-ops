@@ -9,3 +9,10 @@ scripts/tmp-*.mjs
 
 .tmp
 scripts/_attic/
+# build outputs
+**/dist/
+**/*.tsbuildinfo
+# never commit emitted artifacts in src/
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.map
