@@ -19,22 +19,14 @@ const SCRIPTS = "scripts";
 const ATTIC = path.join(SCRIPTS, "_attic", "step-8");
 ensureDir(ATTIC);
 
-// Keep list must match enforcer policy
-const KEEP = new Set([
-  "patch_step_8_lock_policy_execution_binding_v1.mjs",
-  "patch_step_8_termux_bridge_handshake_types_v1.mjs",
-  "patch_step_8_enforce_canonical_surface_v1.mjs",
-  "patch_step_8_create_enforcer_canonical_surface_v1.mjs",
-]);
-
-// This is the offender reported by the enforcer
-const offender = "patch_step_8_attic_enforce_utility_v1.mjs";
+const STRAYS = [
+  "patch_step_8_allow_attic_sweep_utility_v1.mjs",
+  "patch_step_8_attic_stray_step8_scripts_v1.mjs",
+];
 
 function moveToAttic(name) {
   const src = path.join(SCRIPTS, name);
   if (!exists(src)) return false;
-  if (KEEP.has(name)) return false;
-
   const dst = path.join(ATTIC, name);
   if (!exists(dst)) {
     fs.renameSync(src, dst);
@@ -45,9 +37,25 @@ function moveToAttic(name) {
 }
 
 let moved = 0;
-if (moveToAttic(offender)) moved += 1;
+for (const s of STRAYS) if (moveToAttic(s)) moved++;
 
-// Update attic README with a small inventory note (idempotent)
+console.log(`OK: moved ${moved} stray Step-8 utility script(s) to ${ATTIC}.`);
+
+// Remove stray allowlist entry from the enforcer (idempotent)
+const ENFORCER = path.join(SCRIPTS, "patch_step_8_enforce_canonical_surface_v1.mjs");
+if (!exists(ENFORCER)) throw new Error(`Missing: ${ENFORCER}`);
+
+let enforcerSrc = read(ENFORCER);
+
+// We previously injected: , "patch_step_8_attic_stray_step8_scripts_v1.mjs"
+enforcerSrc = enforcerSrc.replace(
+  /,\s*"patch_step_8_attic_stray_step8_scripts_v1\.mjs"\s*/g,
+  ""
+);
+
+writeIfChanged(ENFORCER, enforcerSrc);
+
+// Keep attic README present (idempotent)
 const readme = path.join(ATTIC, "README.md");
 const base = `# Step 8 Attic
 
@@ -58,24 +66,12 @@ This directory contains non-canonical Step 8 recovery / utility scripts retained
 - patch_step_8_termux_bridge_handshake_types_v1.mjs
 - patch_step_8_enforce_canonical_surface_v1.mjs
 - patch_step_8_create_enforcer_canonical_surface_v1.mjs
-
 `;
-let next = base;
-if (exists(readme)) {
-  const prev = readme ? read(readme) : "";
-  // If prior README has extra content, keep it by appending after base once.
-  if (prev && !prev.startsWith(base)) next = base + "\n" + prev;
-}
-writeIfChanged(readme, next);
+if (!exists(readme)) writeIfChanged(readme, base);
 
-console.log(`OK: Step 8 attic sweep complete. Moved ${moved} file(s) to ${ATTIC}.`);
-
-// Prove enforcement + gates (idempotency proof)
-run("node scripts/patch_step_8_enforce_canonical_surface_v1.mjs");
+// Prove enforcement + gates (must end with npm run build)
 run("node scripts/patch_step_8_enforce_canonical_surface_v1.mjs");
 run("./scripts/gate_ci_termux_v1.sh");
 run("./scripts/gate_ci_termux_v1.sh");
-
-// Must end with npm run build
 run("npm test");
 run("npm run build");
