@@ -121,8 +121,24 @@ export class DomainRegistry {
     const spec = this.get(domain_id);
     if (!spec) throw chcOpsError("UNKNOWN_DOMAIN", { domain_id });
 
+
+    
     const taskType = getTaskType(task);
 
+
+    // RUNTIME_AUTH_HARDENING_GATE:
+    // Defense-in-depth: re-assert spec invariants at decision time.
+    validateScopeNamespaces(spec);
+    validateActionScopesSubset(spec);
+
+    if (typeof scope !== "string" || !scope.startsWith(domain_id + ":")) {
+      throw chcOpsError("INVALID_SCOPE_NAMESPACE", {
+        domain_id,
+        task_type: taskType,
+        scope,
+        note: "scope must be namespaced as <domain_id>:*",
+      });
+    }
     // 1) Task type must be supported by this domain executor
     if (!spec.supported_task_types.includes(taskType)) {
       throw chcOpsError("UNSUPPORTED_TASK_TYPE", {
