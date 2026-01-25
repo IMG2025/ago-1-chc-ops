@@ -1,7 +1,7 @@
+import { hospitalityExecutorSpec, ciagExecutorSpec } from "./executors.js";
 import { DomainRegistry } from "./registry";
-import { registerHospitality } from "hospitality-ago-1";
-import { registerCIAG } from "ciag-ago-1";
-
+export { registerHospitality } from "hospitality-ago-1";
+export { registerCIAG } from "ciag-ago-1";
 /**
  * Minimal registry surface needed by domain plugins.
  * We keep this intentionally small to avoid coupling CHC Ops to core internals.
@@ -15,11 +15,9 @@ export type ExecutorRegistryLike = {
  * No globals. No side effects. Deterministic.
  */
 export function mountCHCOpsPlugins(registry: DomainRegistry): void {
-  registerHospitality({ registerExecutor: (spec) => registry.registerExecutor(spec) });
-  registerCIAG({ registerExecutor: (spec) => registry.registerExecutor(spec) });
+  registry.registerExecutor(hospitalityExecutorSpec);
+registry.registerExecutor(ciagExecutorSpec);
 }
-
-export { registerHospitality, registerCIAG };
 
 export * from "./contracts/index.js";
 

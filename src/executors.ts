@@ -5,9 +5,9 @@ export const hospitalityExecutorSpec: ExecutorSpec = {
   executor_id: "hospitalityExecutor",
   supported_task_types: ["EXECUTE", "ANALYZE", "ESCALATE"],
   required_scopes: {
-    EXECUTE: ["task:execute"],
-    ANALYZE: ["task:analyze"],
-    ESCALATE: ["task:escalate"],
+    EXECUTE: ["hospitality:execute"],
+    ANALYZE: ["hospitality:analyze"],
+    ESCALATE: ["hospitality:escalate"],
   },
   domain_action_scopes: {
     RATE_UPDATE: ["hospitality:rates:write"],
