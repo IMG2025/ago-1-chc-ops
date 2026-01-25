@@ -16,3 +16,6 @@ scripts/_attic/
 packages/*/src/**/*.js
 packages/*/src/**/*.d.ts
 packages/*/src/**/*.map
+
+# Local Termux gate runner
+scripts/gate_ci_termux_v1.sh
