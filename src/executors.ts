@@ -11,7 +11,7 @@ export const hospitalityExecutorSpec: ExecutorSpec = {
   },
   domain_action_scopes: {
     RATE_UPDATE: ["hospitality:execute"],
-    TARIFF_SYNC: ["hospitality:tariffs:sync"],
+    TARIFF_SYNC: ["hospitality:execute"],
     VENDOR_INVOICE_CHECK: ["hospitality:invoices:read"],
   },
   validate_inputs: (raw: unknown) => raw,
