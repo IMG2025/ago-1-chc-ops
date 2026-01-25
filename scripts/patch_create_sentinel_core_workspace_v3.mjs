@@ -3,6 +3,18 @@ import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
+
+// NO_TOUCH_WHEN_SENTINEL_CORE_EXISTS
+// If sentinel-core already exists, do not rewrite anything inside it.
+// We only run workspace builds as gates.
+import fs2 from "node:fs";
+const SENTINEL_CORE_DIR = "packages/sentinel-core";
+if (fs2.existsSync(SENTINEL_CORE_DIR)) {
+  console.log("OK: packages/sentinel-core already exists (no rewrite).");
+  execSync("npm -w @chc/sentinel-core run build", { stdio: "inherit" });
+  execSync("npm run build", { stdio: "inherit" });
+  process.exit(0);
+}
 /**
  * IDEMPOTENCY_GUARD_SENTINEL_CORE_EXISTS
  * If sentinel-core already exists, do NOT rewrite any files.
