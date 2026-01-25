@@ -3,6 +3,22 @@ import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
+/**
+ * IDEMPOTENCY_GUARD_SENTINEL_CORE_EXISTS
+ * If sentinel-core already exists, do NOT rewrite any files.
+ * Only rebuild and exit.
+ */
+{
+  const pkgJson = "packages/sentinel-core/package.json";
+  if (fs.existsSync(pkgJson)) {
+    console.log("OK: packages/sentinel-core already exists (no rewrite).");
+    execSync("npm -w @chc/sentinel-core run build", { stdio: "inherit" });
+    execSync("npm run build", { stdio: "inherit" });
+    process.exit(0);
+  }
+}
+
+
 function run(cmd) {
   execSync(cmd, { stdio: "inherit" });
 }
