@@ -10,7 +10,7 @@ export const hospitalityExecutorSpec: ExecutorSpec = {
     ESCALATE: ["hospitality:escalate"],
   },
   domain_action_scopes: {
-    RATE_UPDATE: ["hospitality:rates:write"],
+    RATE_UPDATE: ["hospitality:execute"],
     TARIFF_SYNC: ["hospitality:tariffs:sync"],
     VENDOR_INVOICE_CHECK: ["hospitality:invoices:read"],
   },
