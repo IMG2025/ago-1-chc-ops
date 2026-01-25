@@ -13,4 +13,3 @@ export function mountCHCOpsPlugins(registry: DomainRegistry): void {
   const register = registry.registerExecutor.bind(registry) as unknown as RegisterExecutorFn;
   registerHospitality(register);
 }
-
