@@ -15,6 +15,26 @@ function exists(p) { return fs.existsSync(p); }
 const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
 process.chdir(ROOT);
 
+const TARGET = "scripts/patch_step_8_finalize_canonical_hygiene_v1.mjs";
+if (!exists(TARGET)) throw new Error(`Missing: ${TARGET}`);
+
+const canonical = `#!/usr/bin/env node
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
+
+function run(cmd) { execSync(cmd, { stdio: "inherit" }); }
+function read(p) { return fs.readFileSync(p, "utf8"); }
+function writeIfChanged(p, next) {
+  const prev = fs.existsSync(p) ? read(p) : "";
+  if (prev !== next) fs.writeFileSync(p, next);
+}
+function ensureDir(d) { fs.mkdirSync(d, { recursive: true }); }
+function exists(p) { return fs.existsSync(p); }
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+process.chdir(ROOT);
+
 const SCRIPTS_DIR = "scripts";
 const ATTIC_DIR = path.join(SCRIPTS_DIR, "_attic", "step-8");
 ensureDir(ATTIC_DIR);
@@ -51,7 +71,7 @@ for (const s of MOVE) {
 }
 
 const readme = path.join(ATTIC_DIR, "README.md");
-const content = `# Step 8 Attic
+const content = \`# Step 8 Attic
 
 This directory contains non-canonical Step 8 recovery / utility scripts retained for traceability.
 
@@ -61,10 +81,10 @@ This directory contains non-canonical Step 8 recovery / utility scripts retained
 
 ## Notes
 - One-off consolidation/cleanup utilities are moved here to reduce operational noise.
-`;
-writeIfChanged(readme, content + "\n");
+\`;
+writeIfChanged(readme, content + "\\n");
 
-console.log(`OK: Step 8 canonical hygiene finalized. Moved ${moved} file(s) to ${ATTIC_DIR}.`);
+console.log(\`OK: Step 8 canonical hygiene finalized. Moved \${moved} file(s) to \${ATTIC_DIR}.\`);
 
 // Prove canonical scripts still execute
 run("node scripts/patch_step_8_termux_bridge_handshake_types_v1.mjs");
@@ -72,4 +92,17 @@ run("node scripts/patch_step_8_termux_bridge_handshake_types_v1.mjs");
 
 // Gates (must end with npm run build)
 run("npm test");
+run("npm run build");
+`;
+
+writeIfChanged(TARGET, canonical.endsWith("\n") ? canonical : canonical + "\n");
+fs.chmodSync(TARGET, 0o755);
+
+console.log("OK: repaired patch_step_8_finalize_canonical_hygiene_v1.mjs (syntax + canonical rewrite).");
+
+// Prove idempotency + execute
+run(`node ${TARGET}`);
+run(`node ${TARGET}`);
+
+// Must end with build
 run("npm run build");
