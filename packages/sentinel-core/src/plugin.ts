@@ -1,4 +1,5 @@
 import type { DomainRegistry } from "./registry.js";
+import type { RegisterExecutorFn } from "./contracts/index.js";
 import type { RegisterExecutorFn } from "./contracts/registry.js";
 import { hospitalityExecutorSpec } from "./executors.js";
 export function registerHospitality(register: RegisterExecutorFn): void {
@@ -16,4 +17,11 @@ export function registerHospitality(register: RegisterExecutorFn): void {
 export function mountCHCOpsPlugins(registry: DomainRegistry): void {
   const register: RegisterExecutorFn = registry.registerExecutor.bind(registry);
   mountCHCOpsPlugins(register as any);
+}
+/**
+ * Canonical sentinel-core plugin registration.
+ * Kept stable for workspace consumers.
+ */
+export function registerSentinelCore(register: RegisterExecutorFn): void {
+  registerHospitality(register);
 }
