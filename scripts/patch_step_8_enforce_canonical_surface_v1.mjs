@@ -44,7 +44,7 @@ const entries = readDir(SCRIPTS)
   .map(d => d.name);
 
 // Enforcer is allowed to exist in /scripts in addition to canonical patch scripts
-const ALLOWED = new Set([...CANON, "patch_step_8_enforce_canonical_surface_v1.mjs", "patch_step_8_create_enforcer_canonical_surface_v1.mjs"]);
+const ALLOWED = new Set([...CANON, "patch_step_8_enforce_canonical_surface_v1.mjs", "patch_step_8_create_enforcer_canonical_surface_v1.mjs"], "patch_step_8_attic_stray_step8_scripts_v1.mjs");
 
 const unexpected = entries.filter(n => !ALLOWED.has(n));
 
