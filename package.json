@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "./scripts/smoke_authorize.sh && ./scripts/smoke_authorize_hospitality.sh && ./scripts/smoke_list_domains.sh && ./scripts/audit_mount_canonical_specs.sh && npm run build"
   },
   "dependencies": {
     "ago-1-core": "file:../ago-1-core/ago-1-core-0.1.0.tgz",
