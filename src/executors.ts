@@ -23,9 +23,9 @@ export const ciagExecutorSpec: ExecutorSpec = {
   executor_id: "ciagExecutor",
   supported_task_types: ["EXECUTE", "ANALYZE", "ESCALATE"],
   required_scopes: {
-    EXECUTE: ["task:execute"],
-    ANALYZE: ["task:analyze"],
-    ESCALATE: ["task:escalate"],
+    EXECUTE: ["ciag:execute"],
+    ANALYZE: ["ciag:analyze"],
+    ESCALATE: ["ciag:escalate"],
   },
   validate_inputs: (raw: unknown) => raw,
   execute: (raw: unknown) => ({ status: "STUB_OK", raw }),

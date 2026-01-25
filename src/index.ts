@@ -20,3 +20,7 @@ export function mountCHCOpsPlugins(registry: DomainRegistry): void {
 }
 
 export { registerHospitality, registerCIAG };
+
+export * from "./contracts/index.js";
+
+export * from "./authorize.js";

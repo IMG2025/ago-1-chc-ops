@@ -1,40 +1,31 @@
-import { chcOpsError, getTaskType } from "./errors.js";
-export interface ExecutorRegistry {
-  registerExecutor(spec: ExecutorSpec): void;
+#!/usr/bin/env bash
+set -euo pipefail
+
+FILE="src/registry.ts"
+
+node - <<'NODE'
+import fs from "fs";
+
+const file = "src/registry.ts";
+let s = fs.readFileSync(file, "utf8");
+
+// Ensure imports exist
+if (!s.includes('from "./errors.js"')) {
+  // insert after first import line
+  s = s.replace(
+    /^import[^\n]*\n/m,
+    (m) => `${m}import { chcOpsError, getTaskType } from "./errors.js";\n`
+  );
 }
 
-export type ExecutorSpec = Readonly<{
-  domain_id: string;
-  executor_id: string;
-  supported_task_types: readonly ("EXECUTE" | "ANALYZE" | "ESCALATE")[];
-  required_scopes: Readonly<Partial<Record<"EXECUTE" | "ANALYZE" | "ESCALATE", readonly string[]>>>;
-  domain_action_scopes?: Readonly<Record<string, readonly string[]>>;
-  validate_inputs: (raw: unknown) => unknown;
-  execute: (raw: unknown) => unknown;
-}>;
+// Remove assertAuthorized import if present (we are not using it in strict path)
+s = s.replace(/^\s*import\s+\{\s*assertAuthorized\s*\}\s+from\s+["']\.\/authorize\.js["'];\s*\n/m, "");
 
-export class DomainRegistry {
-  private readonly byDomain = new Map<string, ExecutorSpec>();
+// Replace authorize method implementation inside DomainRegistry class
+// We match `authorize(` through the closing `}` at the same indent.
+const authorizeRe = /\n\s*authorize\(\s*domain_id:\s*string\s*,\s*task:\s*any\s*,\s*scope:\s*string\s*\)\s*:\s*void\s*\{\s*[\s\S]*?\n\s*\}\s*\n/;
 
-  registerExecutor(spec: ExecutorSpec): void {
-    if (this.byDomain.has(spec.domain_id)) {
-      throw new Error(`DUPLICATE_EXECUTOR_FOR_DOMAIN:${spec.domain_id}`);
-    }
-    this.byDomain.set(spec.domain_id, spec);
-  }
-
-  get(domain_id: string): ExecutorSpec | undefined {
-    return this.byDomain.get(domain_id);
-  }
-
-  listDomains(): readonly string[] {
-    return Array.from(this.byDomain.keys()).sort();
-  }
-  /**
-   * Sentinel-aligned gate: validates task support + required scope.
-   * Deterministic. Throws with stable error codes.
-   */
-
+const strictAuthorize = `
   /**
    * Sentinel-aligned gate: validates task support + required scopes.
    * Deterministic. Throws with stable CHC Ops error codes.
@@ -77,11 +68,17 @@ export class DomainRegistry {
       });
     }
   }
+`;
 
+if (authorizeRe.test(s)) {
+  s = s.replace(authorizeRe, `\n${strictAuthorize}\n`);
+} else {
+  // If not found, we insert it right before the end of the class as a fallback.
+  s = s.replace(/\n\}\s*\n\nexport function createRegistry\(/, `\n${strictAuthorize}\n}\n\nexport function createRegistry(`);
 }
 
+fs.writeFileSync(file, s);
+console.log("Hardened DomainRegistry.authorize() (strict checks + stable errors).");
+NODE
 
-export function createRegistry(): ExecutorRegistry {
-  return new DomainRegistry();
-
-  }
+npm run build

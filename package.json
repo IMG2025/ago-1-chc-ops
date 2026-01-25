@@ -14,5 +14,11 @@
   },
   "devDependencies": {
     "typescript": "^5.5.4"
+  },
+  "exports": {
+    "./contracts": {
+      "types": "./dist/contracts/index.d.ts",
+      "default": "./dist/contracts/index.js"
+    }
   }
 }
