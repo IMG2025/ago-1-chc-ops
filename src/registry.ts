@@ -1,4 +1,41 @@
 import { chcOpsError, getTaskType } from "./errors.js";
+
+function validateScopeNamespaces(spec: ExecutorSpec) {
+  const domain = spec.domain_id;
+
+  // Task-type required scopes must exist and be domain-scoped.
+  for (const t of spec.supported_task_types) {
+    const scopes = spec.required_scopes?.[t] ?? [];
+    if (!Array.isArray(scopes) || scopes.length === 0) {
+      const err: any = new Error("MISSING_REQUIRED_SCOPES");
+      err.code = "MISSING_REQUIRED_SCOPES";
+      err.meta = { domain_id: domain, task_type: t, required_scopes: scopes, note: "required_scopes must be declared for all supported_task_types" };
+      throw err;
+    }
+    for (const s of scopes) {
+      if (typeof s !== "string" || !s.startsWith(domain + ":")) {
+        const err: any = new Error("INVALID_SCOPE_NAMESPACE");
+        err.code = "INVALID_SCOPE_NAMESPACE";
+        err.meta = { domain_id: domain, task_type: t, scope: s, note: "task required_scopes must be namespaced as <domain_id>:*" };
+        throw err;
+      }
+    }
+  }
+
+  // Domain-action scopes must also be domain-scoped.
+  const actions = spec.domain_action_scopes ?? {};
+  for (const [action, scopes] of Object.entries(actions)) {
+    for (const s of scopes ?? []) {
+      if (typeof s !== "string" || !s.startsWith(domain + ":")) {
+        const err: any = new Error("INVALID_SCOPE_NAMESPACE");
+        err.code = "INVALID_SCOPE_NAMESPACE";
+        err.meta = { domain_id: domain, action, scope: s, note: "domain_action_scopes must be namespaced as <domain_id>:*" };
+        throw err;
+      }
+    }
+  }
+}
+
 export interface ExecutorRegistry {
   registerExecutor(spec: ExecutorSpec): void;
 }
@@ -17,6 +54,7 @@ export class DomainRegistry {
   private readonly byDomain = new Map<string, ExecutorSpec>();
 
   registerExecutor(spec: ExecutorSpec): void {
+    validateScopeNamespaces(spec);
     if (this.byDomain.has(spec.domain_id)) {
       throw new Error(`DUPLICATE_EXECUTOR_FOR_DOMAIN:${spec.domain_id}`);
     }
