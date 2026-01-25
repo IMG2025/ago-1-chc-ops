@@ -1,7 +1,5 @@
-import type { ExecutorSpec } from "./executor";
-
 /**
- * Minimal registry contract CHC Ops depends on.
- * Domain registries may implement additional methods, but must satisfy this.
+ * CHC_OPS_SENTINEL_CORE_REEXPORT_SHIM
+ * Canonical contract types live in @chc/sentinel-core.
  */
-export type RegisterExecutorFn = (spec: ExecutorSpec) => void;
+export * from "@chc/sentinel-core";

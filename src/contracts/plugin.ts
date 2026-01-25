@@ -1,7 +1,5 @@
-import type { RegisterExecutorFn } from "./registry";
-
 /**
- * Single, canonical plugin registration contract.
- * Every domain plugin must expose a register function that conforms to this shape.
+ * CHC_OPS_SENTINEL_CORE_REEXPORT_SHIM
+ * Canonical contract types live in @chc/sentinel-core.
  */
-export type RegisterPluginFn = (register: RegisterExecutorFn) => void;
+export * from "@chc/sentinel-core";
