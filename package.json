@@ -1,0 +1,18 @@
+{
+  "name": "ago-1-chc-ops",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "ago-1-core": "file:../ago-1-core/ago-1-core-0.1.0.tgz",
+    "ciag-ago-1": "file:../ciag-ago-1",
+    "hospitality-ago-1": "file:../../hospitality-ago-1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
