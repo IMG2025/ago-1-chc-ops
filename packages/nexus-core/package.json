@@ -12,7 +12,8 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "smoke": "node ./dist/diagnostics/smoke.js"
   },
   "dependencies": {
     "@chc/sentinel-core": "workspace:*"

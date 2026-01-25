@@ -1,17 +1,18 @@
-// Nexus Core — Canonical Public Surface (v1)
-// Guardrail: do not use 'export * from ...' (prevents drift + collisions).
-
+// Canonical Public Surface (v1)
 export type {
-  TaskId,
   DomainId,
+  ExecutorId,
   TaskType,
   TaskEnvelope,
   OrchestrationResult,
+  ExecutorAdapter,
+  RoutingPolicy,
   Orchestrator,
-} from "./orchestrator.js";
+} from "./orchestration.js";
 
-export { defaultOrchestrator } from "./orchestrator.js";
+export { defaultRoutingPolicy } from "./orchestration.js";
+export { NexusOrchestrator } from "./orchestrator_v1.js";
 
-export type { NexusTaskEnvelope, SentinelRegistrar, SentinelGateway, NexusMountFn } from "./handshake.js";
-
-export { mountPluginsIntoSentinel } from "./handshake.js";
+export type { HandshakeRequest, HandshakeDecision } from "./handshake.js";
+export type { GovernanceGateway } from "./handshake.js";
+// handshake-audit-required: Handshake | GovernanceGateway

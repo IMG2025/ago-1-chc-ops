@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+mkdir -p ".tmp"
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
@@ -17,9 +18,9 @@ if [[ ! -f "$INDEX" ]]; then
 fi
 
 # 1) No star exports anywhere in nexus-core/src (belt + suspenders)
-if grep -R --line-number -E '^\s*export\s+\*\s+from\s+' "$PKG/src" >/tmp/nexus_star_exports.txt 2>/dev/null; then
+if grep -R --line-number -E '^\s*export\s+\*\s+from\s+' "$PKG/src" >.tmp/nexus_star_exports.txt 2>/dev/null; then
   echo "---- offending export * lines ----"
-  cat /tmp/nexus_star_exports.txt
+  cat .tmp/nexus_star_exports.txt
   echo "FAIL: nexus-core must not use 'export * from ...'"
   exit 1
 fi
@@ -32,9 +33,9 @@ fi
 
 # Disallow deep imports into sentinel-core internals:
 # - "@chc/sentinel-core/" (anything after slash)
-if grep -R --line-number -E '@chc/sentinel-core/' "$HANDSHAKE" >/tmp/handshake_deep_imports.txt 2>/dev/null; then
+if grep -R --line-number -E '@chc/sentinel-core/' "$HANDSHAKE" >.tmp/handshake_deep_imports.txt 2>/dev/null; then
   echo "---- offending deep import lines ----"
-  cat /tmp/handshake_deep_imports.txt
+  cat .tmp/handshake_deep_imports.txt
   echo "FAIL: handshake must not deep-import sentinel-core. Use '@chc/sentinel-core' only."
   exit 1
 fi
@@ -46,4 +47,3 @@ if ! grep -q 'from "./handshake.js"' "$INDEX"; then
 fi
 
 echo "OK: sentinel↔nexus handshake frozen surface audit passed."
-
