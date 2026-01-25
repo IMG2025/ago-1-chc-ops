@@ -22,3 +22,6 @@ scripts/gate_ci_termux_v1.sh
 
 # Termux local logs
 .tmp/
+
+# Termux gate logs
+.tmp/
