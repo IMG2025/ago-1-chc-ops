@@ -21,5 +21,8 @@
       "types": "./dist/contracts/index.d.ts",
       "default": "./dist/contracts/index.js"
     }
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
