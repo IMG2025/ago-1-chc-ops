@@ -3,7 +3,9 @@ export type CHCOpsErrorCode =
   | "UNSUPPORTED_TASK_TYPE"
   | "MISSING_SCOPE"
   | "MISSING_ACTION_SCOPE"
-  | "INVALID_TASK";
+  | "INVALID_TASK"
+  | "INVALID_SCOPE_NAMESPACE"
+  | "ACTION_SCOPE_NOT_ALLOWED";
 
 export type CHCOpsError = Error & {
   code: CHCOpsErrorCode;

@@ -36,6 +36,45 @@ function validateScopeNamespaces(spec: ExecutorSpec) {
   }
 }
 
+
+// ACTION_SCOPES_SUBSET_GATE:
+// Sentinel-aligned: every domain_action_scopes entry must be in the allowed required_scopes universe.
+function validateActionScopesSubset(spec: ExecutorSpec) {
+  const domain = spec.domain_id;
+
+  // Build allowlist = union of all required_scopes across supported_task_types.
+  const allow = new Set<string>();
+  for (const t of spec.supported_task_types) {
+    const scopes = spec.required_scopes?.[t] ?? [];
+    for (const s of scopes ?? []) allow.add(s);
+  }
+
+  const actions = spec.domain_action_scopes ?? {};
+  for (const [action, scopes] of Object.entries(actions)) {
+    for (const s of (scopes ?? [])) {
+      // Namespacing is already validated separately, but keep this defensive.
+      if (typeof s !== "string" || !s.startsWith(domain + ":")) {
+        throw chcOpsError("INVALID_SCOPE_NAMESPACE", {
+          domain_id: domain,
+          action,
+          scope: s,
+          note: "domain_action_scopes must be namespaced as <domain_id>:*",
+        });
+      }
+      if (!allow.has(s)) {
+        throw chcOpsError("ACTION_SCOPE_NOT_ALLOWED", {
+          domain_id: domain,
+          action,
+          scope: s,
+          allowed_scopes: Array.from(allow).sort(),
+          note: "domain_action_scopes must be a subset of required_scopes (union across supported_task_types).",
+        });
+      }
+    }
+  }
+}
+
+
 export interface ExecutorRegistry {
   registerExecutor(spec: ExecutorSpec): void;
 }
@@ -55,6 +94,7 @@ export class DomainRegistry {
 
   registerExecutor(spec: ExecutorSpec): void {
     validateScopeNamespaces(spec);
+    validateActionScopesSubset(spec);
     if (this.byDomain.has(spec.domain_id)) {
       throw new Error(`DUPLICATE_EXECUTOR_FOR_DOMAIN:${spec.domain_id}`);
     }
