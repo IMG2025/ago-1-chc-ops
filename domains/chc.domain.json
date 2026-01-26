@@ -1,0 +1,38 @@
+{
+  "domain_id": "chc",
+  "name": "CHC Ops",
+  "version": "v1",
+  "scopes": {
+    "ANALYZE": [
+      "chc:read",
+      "chc:analyze"
+    ],
+    "EXECUTE": [
+      "chc:execute"
+    ],
+    "ESCALATE": [
+      "chc:escalate"
+    ]
+  },
+  "tasks": [
+    {
+      "task_type": "ANALYZE",
+      "required_scope_any": [
+        "chc:read",
+        "chc:analyze"
+      ]
+    },
+    {
+      "task_type": "EXECUTE",
+      "required_scope_any": [
+        "chc:execute"
+      ]
+    },
+    {
+      "task_type": "ESCALATE",
+      "required_scope_any": [
+        "chc:escalate"
+      ]
+    }
+  ]
+}
