@@ -1,0 +1,42 @@
+{
+  "domain_id": "ciag",
+  "name": "CIAG",
+  "version": "v1",
+  "scopes": {
+    "ANALYZE": [
+      "ciag:analyze"
+    ],
+    "EXECUTE": [
+      "ciag:execute"
+    ],
+    "ESCALATE": [
+      "ciag:escalate"
+    ]
+  },
+  "tasks": [
+    {
+      "task_type": "ANALYZE",
+      "required_scope_any": [
+        "ciag:read",
+        "ciag:analyze"
+      ]
+    },
+    {
+      "task_type": "EXECUTE",
+      "required_scope_any": [
+        "ciag:execute"
+      ]
+    },
+    {
+      "task_type": "ESCALATE",
+      "required_scope_any": [
+        "ciag:escalate"
+      ]
+    }
+  ],
+  "supported_task_types": [
+    "EXECUTE",
+    "ANALYZE",
+    "ESCALATE"
+  ]
+}
