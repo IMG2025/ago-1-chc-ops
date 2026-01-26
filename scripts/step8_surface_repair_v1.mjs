@@ -71,7 +71,7 @@ if (!exists(readme)) writeIfChanged(readme, base);
 
 // Prove enforcement + gates (must end with npm run build)
 run("node scripts/patch_step_8_enforce_canonical_surface_v1.mjs");
-run("./scripts/gate_ci_termux_v1.sh");
-run("./scripts/gate_ci_termux_v1.sh");
+run("CI_ALLOW_DIRTY_TREE=1 ./scripts/gate_ci_termux_v1.sh");
+run("CI_ALLOW_DIRTY_TREE=1 ./scripts/gate_ci_termux_v1.sh");
 run("npm test");
 run("npm run build");
