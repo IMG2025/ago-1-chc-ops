@@ -30,3 +30,20 @@ export const ciagExecutorSpec: ExecutorSpec = {
   validate_inputs: (raw: unknown) => raw,
   execute: (raw: unknown) => ({ status: "STUB_OK", raw }),
 };
+
+
+/**
+ * CHC Ops executor spec (Step 9)
+ * Keep this aligned with DomainRegistry expectations (domain_id + task types + required scopes).
+ */
+export const chcExecutorSpec = {
+  domain_id: "chc",
+  name: "CHC Ops",
+  version: "v1",
+  supported_task_types: ["EXECUTE", "ANALYZE", "ESCALATE"],
+  required_scopes: {
+    EXECUTE: ["chc:execute"],
+    ANALYZE: ["chc:analyze"],
+    ESCALATE: ["chc:escalate"],
+  },
+};

@@ -10,7 +10,7 @@ mountCHCOpsPlugins(r);
 
 const h = r.get("hospitality");
 const c = r.get("ciag");
-
+const chc = r.get("chc");
 function assert(cond, msg) {
   if (!cond) { console.error("FAIL:", msg); process.exit(1); }
 }
@@ -33,7 +33,12 @@ assert(c.required_scopes?.EXECUTE?.[0] === "ciag:execute", "ciag EXECUTE scope n
 assert(c.required_scopes?.ANALYZE?.[0] === "ciag:analyze", "ciag ANALYZE scope not canonical");
 assert(c.required_scopes?.ESCALATE?.[0] === "ciag:escalate", "ciag ESCALATE scope not canonical");
 
-console.log("OK: mount uses canonical local specs for hospitality + ciag");
+assert(chc, "chc domain missing");
+assert(chc.required_scopes?.EXECUTE?.[0] === "chc:execute", "chc EXECUTE scope not canonical");
+assert(chc.required_scopes?.ANALYZE?.[0] === "chc:analyze", "chc ANALYZE scope not canonical");
+assert(chc.required_scopes?.ESCALATE?.[0] === "chc:escalate", "chc ESCALATE scope not canonical");
+
+console.log("OK: mount uses canonical local specs for hospitality + ciag + chc");
 NODE
 
 npm run build

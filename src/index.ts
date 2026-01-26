@@ -1,4 +1,4 @@
-import { hospitalityExecutorSpec, ciagExecutorSpec } from "./executors.js";
+import { hospitalityExecutorSpec, ciagExecutorSpec, chcExecutorSpec } from "./executors.js";
 import { DomainRegistry } from "./registry";
 export { registerHospitality } from "hospitality-ago-1";
 export { registerCIAG } from "ciag-ago-1";
@@ -16,7 +16,7 @@ export type ExecutorRegistryLike = {
  */
 export function mountCHCOpsPlugins(registry: DomainRegistry): void {
   registry.registerExecutor(hospitalityExecutorSpec);
-registry.registerExecutor(ciagExecutorSpec);
+registry.registerExecutor(ciagExecutorSpec); registry.registerExecutor(chcExecutorSpec);
 }
 
 export * from "./contracts/index.js";
