@@ -2,6 +2,11 @@
   "domain_id": "hospitality",
   "name": "Hospitality",
   "version": "v1",
+  "supported_task_types": [
+    "EXECUTE",
+    "ANALYZE",
+    "ESCALATE"
+  ],
   "scopes": {
     "ANALYZE": [
       "hospitality:analyze"
@@ -13,30 +18,31 @@
       "hospitality:escalate"
     ]
   },
-  "tasks": [
-    {
-      "task_type": "ANALYZE",
-      "required_scope_any": [
-        "hospitality:read",
-        "hospitality:analyze"
-      ]
-    },
-    {
-      "task_type": "EXECUTE",
-      "required_scope_any": [
-        "hospitality:execute"
-      ]
-    },
-    {
-      "task_type": "ESCALATE",
-      "required_scope_any": [
-        "hospitality:escalate"
+  "meta": {
+    "updated_by": "scripts/normalize_domain_specs_v1.mjs",
+    "updated_at": "2026-01-27T00:03:34.582Z",
+    "extras": {
+      "tasks": [
+        {
+          "task_type": "ANALYZE",
+          "required_scope_any": [
+            "hospitality:read",
+            "hospitality:analyze"
+          ]
+        },
+        {
+          "task_type": "EXECUTE",
+          "required_scope_any": [
+            "hospitality:execute"
+          ]
+        },
+        {
+          "task_type": "ESCALATE",
+          "required_scope_any": [
+            "hospitality:escalate"
+          ]
+        }
       ]
     }
-  ],
-  "supported_task_types": [
-    "EXECUTE",
-    "ANALYZE",
-    "ESCALATE"
-  ]
+  }
 }

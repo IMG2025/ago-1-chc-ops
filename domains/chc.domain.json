@@ -2,6 +2,11 @@
   "domain_id": "chc",
   "name": "CHC Ops",
   "version": "v1",
+  "supported_task_types": [
+    "EXECUTE",
+    "ANALYZE",
+    "ESCALATE"
+  ],
   "scopes": {
     "ANALYZE": [
       "chc:read",
@@ -14,25 +19,31 @@
       "chc:escalate"
     ]
   },
-  "tasks": [
-    {
-      "task_type": "ANALYZE",
-      "required_scope_any": [
-        "chc:read",
-        "chc:analyze"
-      ]
-    },
-    {
-      "task_type": "EXECUTE",
-      "required_scope_any": [
-        "chc:execute"
-      ]
-    },
-    {
-      "task_type": "ESCALATE",
-      "required_scope_any": [
-        "chc:escalate"
+  "meta": {
+    "updated_by": "scripts/normalize_domain_specs_v1.mjs",
+    "updated_at": "2026-01-27T00:03:34.580Z",
+    "extras": {
+      "tasks": [
+        {
+          "task_type": "ANALYZE",
+          "required_scope_any": [
+            "chc:read",
+            "chc:analyze"
+          ]
+        },
+        {
+          "task_type": "EXECUTE",
+          "required_scope_any": [
+            "chc:execute"
+          ]
+        },
+        {
+          "task_type": "ESCALATE",
+          "required_scope_any": [
+            "chc:escalate"
+          ]
+        }
       ]
     }
-  ]
+  }
 }

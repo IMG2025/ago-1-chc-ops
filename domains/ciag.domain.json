@@ -2,6 +2,11 @@
   "domain_id": "ciag",
   "name": "CIAG",
   "version": "v1",
+  "supported_task_types": [
+    "EXECUTE",
+    "ANALYZE",
+    "ESCALATE"
+  ],
   "scopes": {
     "ANALYZE": [
       "ciag:analyze"
@@ -13,30 +18,31 @@
       "ciag:escalate"
     ]
   },
-  "tasks": [
-    {
-      "task_type": "ANALYZE",
-      "required_scope_any": [
-        "ciag:read",
-        "ciag:analyze"
-      ]
-    },
-    {
-      "task_type": "EXECUTE",
-      "required_scope_any": [
-        "ciag:execute"
-      ]
-    },
-    {
-      "task_type": "ESCALATE",
-      "required_scope_any": [
-        "ciag:escalate"
+  "meta": {
+    "updated_by": "scripts/normalize_domain_specs_v1.mjs",
+    "updated_at": "2026-01-27T00:03:34.582Z",
+    "extras": {
+      "tasks": [
+        {
+          "task_type": "ANALYZE",
+          "required_scope_any": [
+            "ciag:read",
+            "ciag:analyze"
+          ]
+        },
+        {
+          "task_type": "EXECUTE",
+          "required_scope_any": [
+            "ciag:execute"
+          ]
+        },
+        {
+          "task_type": "ESCALATE",
+          "required_scope_any": [
+            "ciag:escalate"
+          ]
+        }
       ]
     }
-  ],
-  "supported_task_types": [
-    "EXECUTE",
-    "ANALYZE",
-    "ESCALATE"
-  ]
+  }
 }

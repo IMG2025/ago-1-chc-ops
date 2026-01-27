@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coreholdingcorp.com/schemas/domain.spec.schema.json",
+  "title": "AGO-1 Domain Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "domain_id",
+    "supported_task_types",
+    "scopes"
+  ],
+  "properties": {
+    "domain_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9\\-]*$",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "supported_task_types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "EXECUTE",
+          "ANALYZE",
+          "ESCALATE"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "scopes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "EXECUTE": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "ANALYZE": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "ESCALATE": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": []
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "extras": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": []
+    }
+  }
+}
