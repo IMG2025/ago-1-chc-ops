@@ -64,31 +64,47 @@
     "domain_action_scopes": {
       "type": "object",
       "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "EXECUTE": {
+        "anyOf": [
+          {
             "type": "array",
             "items": {
               "type": "string",
               "minLength": 1
-            }
+            },
+            "minItems": 1
           },
-          "ANALYZE": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1
-            }
+          {
+            "type": "string",
+            "minLength": 1
           },
-          "ESCALATE": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "EXECUTE": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "ANALYZE": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "ESCALATE": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           }
-        }
+        ]
       }
     }
   }
