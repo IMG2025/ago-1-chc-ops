@@ -4,14 +4,13 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-# Normalize first so schema audit is deterministic
-node ./scripts/normalize_domain_specs_v1.mjs >/dev/null
+# Build first; dist is source of truth for runtime imports
+npm run build >/dev/null
 
 node - <<'NODE'
 import fs from "node:fs";
 import path from "node:path";
 import Ajv from "ajv";
-import addFormats from "ajv-formats";
 
 function fail(msg) {
   console.error("FAIL:", msg);
@@ -19,39 +18,42 @@ function fail(msg) {
 }
 
 const schemaPath = path.join("schemas", "domain.spec.schema.json");
-if (!fs.existsSync(schemaPath)) fail("Missing schema: " + schemaPath);
+if (!fs.existsSync(schemaPath)) fail(`Missing schema: ${schemaPath}`);
 
 let schema;
 try { schema = JSON.parse(fs.readFileSync(schemaPath, "utf8")); }
-catch (e) { fail("Invalid schema JSON: " + (e?.message ?? e)); }
+catch (e) { fail(`Invalid JSON schema: ${schemaPath}`); }
 
 const ajv = new Ajv({ allErrors: true, strict: false });
-addFormats(ajv);
-
 const validate = ajv.compile(schema);
 
 const domainsDir = "domains";
-const files = fs.readdirSync(domainsDir).filter(f => f.endsWith(".domain.json"));
-if (files.length === 0) fail("No domain spec files found in /domains");
+if (!fs.existsSync(domainsDir)) fail("Missing domains/ directory.");
 
+const files = fs.readdirSync(domainsDir).filter(f => f.endsWith(".domain.json")).sort();
+if (files.length === 0) fail("No domain spec files found in domains/.");
+
+const bad = [];
 for (const f of files) {
   const p = path.join(domainsDir, f);
   let doc;
   try { doc = JSON.parse(fs.readFileSync(p, "utf8")); }
-  catch (e) { fail("Invalid JSON: " + p + ": " + (e?.message ?? e)); }
+  catch (e) { bad.push({ file: f, error: "INVALID_JSON" }); continue; }
 
   const ok = validate(doc);
   if (!ok) {
-    const errs = (validate.errors ?? []).map(e => {
-      const loc = e.instancePath || "(root)";
-      return `${p} ${loc} ${e.message}`;
-    });
-    fail("Schema validation failed:\n" + errs.join("\n"));
+    bad.push({ file: f, error: "SCHEMA_VIOLATION", details: validate.errors });
   }
 }
 
-console.log("OK: domain specs conform to schema:", files.map(f => f.replace(/\.domain\.json$/, "")));
-NODE
+if (bad.length) {
+  console.error("FAIL: domain specs do not conform to schema:");
+  for (const b of bad) {
+    console.error("-", b.file, b.error);
+    if (b.details) console.error(JSON.stringify(b.details, null, 2));
+  }
+  process.exit(1);
+}
 
-# Must end with npm run build (audit scripts included in npm test chain, but we keep the convention here)
-npm run build >/dev/null
+console.log("OK: domain specs conform to schema:", files.map(f => f.replace(".domain.json","")));
+NODE
