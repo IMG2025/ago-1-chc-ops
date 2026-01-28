@@ -4,8 +4,6 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-npm run build >/dev/null
-
 node - <<'NODE'
 import { DomainRegistry } from "./dist/registry.js";
 import { mountCHCOpsPlugins } from "./dist/index.js";

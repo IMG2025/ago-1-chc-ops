@@ -4,8 +4,6 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-npm run build >/dev/null
-
 # 1) Dist entrypoints must be importable (runtime contract)
 node - <<'NODE'
 async function main() {

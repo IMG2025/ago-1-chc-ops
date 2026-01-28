@@ -4,8 +4,6 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-npm run build >/dev/null
-
 [[ -x "./scripts/smoke_list_domains.sh" ]] || { echo "FAIL: missing or not executable: ./scripts/smoke_list_domains.sh"; exit 1; }
 
 out="$(./scripts/smoke_list_domains.sh 2>&1 || true)"
