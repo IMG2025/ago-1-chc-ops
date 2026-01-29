@@ -36,7 +36,24 @@ function toolError(res, status, code, message, traceId, details) {
 // == MCP tool registry (Phase 7) ==
 const TOOL_REGISTRY = {
   "shared.artifact_registry.read": {
+    version: "1.0.0",
     description: "Return the shared artifact registry (read-only bootstrap tool).",
+    // Minimal JSON-schema-ish descriptors (tool-meta.v1)
+    argsSchema: {
+      type: "object",
+      additionalProperties: true,
+      description: "No args required (reserved for future filtering)."
+    },
+    responseSchema: {
+      type: "object",
+      required: ["schema", "tenant", "generatedAt", "artifacts"],
+      properties: {
+        schema: { type: "string" },
+        tenant: { type: "string" },
+        generatedAt: { type: "string" },
+        artifacts: { type: "array" }
+      }
+    },
     handler: async ({ ctx }) => {
       const data = readJson(SHARED_ARTIFACTS_PATH);
       return {
@@ -50,6 +67,11 @@ const TOOL_REGISTRY = {
 };
 
 // Default allowlist by tenant (tighten over time; default-deny elsewhere)
+// Phase 8: registry/introspection schema
+const MCP_TOOLS_REGISTRY_SCHEMA = "mcp.tools-registry.v1";
+const REQUIRED_CTX_FIELDS = ["tenant", "actor", "purpose", "classification", "traceId"];
+const TOOL_META_SCHEMA_VERSION = "tool-meta.v1";
+
 const TENANT_NAMESPACE_ALLOWLIST = {
   shared: ["shared."],
   chc: ["shared.", "chc."],
@@ -58,7 +80,7 @@ const TENANT_NAMESPACE_ALLOWLIST = {
 };
 
 function assertCtx(ctx) {
-  const required = ["tenant", "actor", "purpose", "classification", "traceId"];
+  const required = REQUIRED_CTX_FIELDS;
   for (const k of required) {
     if (!ctx || typeof ctx[k] !== "string" || !ctx[k].trim()) {
       const err = new Error(`Invalid ctx: missing ${k}`);
@@ -112,9 +134,21 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && pathname === "/tools") {
     const tools = Object.entries(TOOL_REGISTRY).map(([name, v]) => ({
       name,
-      description: v?.description || ""
+      version: v?.version || "0.0.0",
+      description: v?.description || "",
+      metaSchema: TOOL_META_SCHEMA_VERSION,
+      argsSchema: v?.argsSchema || { type: "object", additionalProperties: true },
+      responseSchema: v?.responseSchema || { type: "object", additionalProperties: true }
     }));
-    return json(res, 200, { ok: true, tools });
+
+    return json(res, 200, {
+      ok: true,
+      schema: MCP_TOOLS_REGISTRY_SCHEMA,
+      requiredCtxFields: REQUIRED_CTX_FIELDS,
+      tenants: Object.keys(TENANT_NAMESPACE_ALLOWLIST),
+      namespaceAllowlistByTenant: TENANT_NAMESPACE_ALLOWLIST,
+      tools
+    });
   }
 
   if (req.method === "POST" && pathname === "/tool") {
