@@ -1,4 +1,42 @@
 #!/usr/bin/env node
+/**
+ * patch_rebuild_mcp_shared_server_phase7_v3.mjs
+ * Canonical rebuild of services/mcp-shared-server/server.mjs to eliminate brace drift.
+ *
+ * Phase 7A+7B:
+ * - GET /health
+ * - GET /tools (discoverability)
+ * - POST /tool (ctx-required + namespace allowlist + registry dispatch)
+ *
+ * Idempotent (writes only if different). Ends with: npm run build
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
+
+function run(cmd) { execSync(cmd, { stdio: "inherit" }); }
+function read(p) { return fs.readFileSync(p, "utf8"); }
+function writeIfChanged(p, next) {
+  const prev = fs.existsSync(p) ? read(p) : "";
+  if (prev !== next) {
+    fs.writeFileSync(p, next);
+    console.log("Patched:", p);
+    return true;
+  }
+  console.log("No changes needed; already applied.");
+  return false;
+}
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+const serverPath = path.join(ROOT, "services", "mcp-shared-server", "server.mjs");
+const sharedArtifactsPath = path.join(ROOT, "data", "artifacts.shared.json");
+
+if (!fs.existsSync(sharedArtifactsPath)) {
+  console.error("Missing required shared artifacts file:", sharedArtifactsPath);
+  process.exit(1);
+}
+
+const next = `#!/usr/bin/env node
 import http from "node:http";
 import { URL } from "node:url";
 import fs from "node:fs";
@@ -6,7 +44,7 @@ import path from "node:path";
 
 const REPO_ROOT = process.env.REPO_ROOT || process.cwd();
 const PORT = Number(process.env.MCP_SHARED_PORT || 8787);
-const SHARED_ARTIFACTS_PATH = "/data/data/com.termux/files/home/work/ago-1-chc-ops/data/artifacts.shared.json";
+const SHARED_ARTIFACTS_PATH = ${JSON.stringify(sharedArtifactsPath)};
 
 function readJson(fp) {
   return JSON.parse(fs.readFileSync(fp, "utf8"));
@@ -61,7 +99,7 @@ function assertCtx(ctx) {
   const required = ["tenant", "actor", "purpose", "classification", "traceId"];
   for (const k of required) {
     if (!ctx || typeof ctx[k] !== "string" || !ctx[k].trim()) {
-      const err = new Error(`Invalid ctx: missing ${k}`);
+      const err = new Error(\`Invalid ctx: missing \${k}\`);
       err.statusCode = 400;
       throw err;
     }
@@ -135,8 +173,17 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`mcp-shared-server listening on :${PORT}`);
+  console.log(\`mcp-shared-server listening on :\${PORT}\`);
   console.log("GET  /health");
   console.log("GET  /tools");
   console.log("POST /tool { tool, args, ctx }");
 });
+`;
+
+writeIfChanged(serverPath, next);
+
+console.log("== Syntax check (required gate) ==");
+run(`node --check ${serverPath}`);
+
+console.log("== Running build (required) ==");
+run("npm run build");
