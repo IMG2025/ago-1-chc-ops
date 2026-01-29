@@ -1,0 +1,23 @@
+{
+  "schema": "artifact-registry.v1",
+  "tenant": "shared",
+  "generatedAt": "2026-01-29T21:55:31.773Z",
+  "artifacts": [
+    {
+      "id": "ECF-1",
+      "name": "Executive Control Framework Charter",
+      "version": "v1.0",
+      "status": "locked",
+      "owner": "CHC",
+      "pathHint": "docs/ecf/ECF-1_CHARTER.md"
+    },
+    {
+      "id": "AGO-1-CHC-OPS-RUNBOOK",
+      "name": "AGO-1 CHC Ops Operator Runbook",
+      "version": "v1.0",
+      "status": "locked",
+      "owner": "CHC",
+      "pathHint": "docs/CHC_OPERATOR_RUNBOOK.md"
+    }
+  ]
+}
