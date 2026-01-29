@@ -23,3 +23,4 @@ export * from "./contracts/index.js";
 export * from "./authorize.js";
 /* NOTE: hospitality-ago-1 export intentionally decoupled */
 // CHC Ops must not hard-depend on other AGO-1 repos. Use MCP tool plane via Nexus instead.
+export * as mcp from "./mcp";
