@@ -1,0 +1,31 @@
+{
+  "schema": "artifact-registry.v1",
+  "tenant": "chc",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "artifacts": [
+    {
+      "id": "TENANT-SEED-CHC",
+      "name": "Tenant Seed Marker (CHC)",
+      "version": "v1.0",
+      "status": "locked",
+      "owner": "CHC",
+      "pathHint": "data/artifacts.chc.json#TENANT-SEED-CHC"
+    },
+    {
+      "id": "ECF-1",
+      "name": "Executive Control Framework Charter",
+      "version": "v1.0",
+      "status": "locked",
+      "owner": "CHC",
+      "pathHint": "docs/ecf/ECF-1_CHARTER.md"
+    },
+    {
+      "id": "AGO-1-CHC-OPS-RUNBOOK",
+      "name": "AGO-1 CHC Ops Operator Runbook",
+      "version": "v1.0",
+      "status": "locked",
+      "owner": "CHC",
+      "pathHint": "docs/CHC_OPERATOR_RUNBOOK.md"
+    }
+  ]
+}
