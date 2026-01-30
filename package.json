@@ -10,7 +10,8 @@
     "mcp:shared": "node services/mcp-shared-server/server.mjs",
     "mcp:smoke": "node scripts/mcp_smoke_phase3.mjs",
     "mcp:smoke6": "node scripts/mcp_smoke_phase6.mjs",
-    "mcp:smoke11": "node scripts/mcp_smoke_phase11.mjs"
+    "mcp:smoke11": "node scripts/mcp_smoke_phase11.mjs",
+    "mcp:smoke14": "node scripts/mcp_smoke_phase14.mjs"
   },
   "dependencies": {
     "ago-1-core": "github:IMG2025/ago-1-core#master",
