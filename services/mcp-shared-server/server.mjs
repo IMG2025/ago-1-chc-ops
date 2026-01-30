@@ -17,6 +17,22 @@ const TENANT_NAMESPACE_ALLOWLIST = {
   hospitality: ["shared.", "hospitality."]
 };
 
+
+/* CANONICAL TENANT REGISTRY HELPER — LOCKED */
+function readTenantRegistry(tenant = "shared") {
+  const fp = TENANT_REGISTRY_PATHS[tenant];
+  if (!fp) throw new Error("Unknown tenant: " + tenant);
+
+  const raw = JSON.parse(fs.readFileSync(fp, "utf8"));
+  return {
+    schema: raw.schema || "artifact-registry.v1",
+    tenant: raw.tenant || tenant,
+    generatedAt: raw.generatedAt || new Date().toISOString(),
+    artifacts: Array.isArray(raw.artifacts) ? raw.artifacts : []
+  };
+}
+/* /CANONICAL TENANT REGISTRY HELPER */
+
 const TENANT_REGISTRY_PATHS = {
   shared: path.join(ROOT, "data", "artifacts.shared.json"),
   chc: path.join(ROOT, "data", "artifacts.chc.json"),
