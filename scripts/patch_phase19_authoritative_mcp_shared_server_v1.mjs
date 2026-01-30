@@ -1,9 +1,37 @@
 #!/usr/bin/env node
-import http from "node:http";
-import url from "node:url";
+/**
+ * Phase 19 — Authoritative MCP shared server reset (tenant registry mapping fix)
+ * - Rewrites server.mjs after last import (prevents brace drift / syntax corruption)
+ * - Hard-maps tenant registries to data/artifacts.{tenant}.json
+ * - Enforces ctx required fields + namespace allowlist
+ * - Provides GET /health, /tools, /capabilities
+ *
+ * Idempotent. Ends with: node --check + npm run build
+ */
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
+function run(cmd) { execSync(cmd, { stdio: "inherit" }); }
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+const serverPath = path.join(ROOT, "services", "mcp-shared-server", "server.mjs");
+
+if (!fs.existsSync(serverPath)) {
+  console.error("Missing:", serverPath);
+  process.exit(1);
+}
+
+const src = fs.readFileSync(serverPath, "utf8");
+const importMatches = [...src.matchAll(/^import .*;$/gm)];
+if (!importMatches.length) {
+  console.error("No import lines found — unsafe to continue.");
+  process.exit(1);
+}
+const lastImport = importMatches[importMatches.length - 1];
+const prefix = src.slice(0, lastImport.index + lastImport[0].length) + "\n";
+
+const replacement = `
 const ROOT = process.env.REPO_ROOT || process.cwd();
 const PORT = Number(process.env.MCP_SHARED_PORT || 8787);
 
@@ -207,3 +235,13 @@ server.listen(PORT, () => {
   console.log("mcp-shared-server listening on :" + PORT);
   console.log("MCP registry keys:", Object.keys(TOOL_REGISTRY).sort());
 });
+`;
+
+fs.writeFileSync(serverPath, prefix + replacement);
+console.log("Patched:", serverPath);
+
+console.log("== Syntax check (required gate) ==");
+run("node --check " + serverPath);
+
+console.log("== Running build (required) ==");
+run("npm run build");
