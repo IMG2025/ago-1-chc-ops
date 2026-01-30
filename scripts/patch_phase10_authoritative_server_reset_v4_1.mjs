@@ -1,9 +1,41 @@
 #!/usr/bin/env node
-import http from "node:http";
-import url from "node:url";
+/**
+ * Phase 10 — AUTHORITATIVE SERVER RESET (v4.1)
+ * FIX: remove invalid escaped template literal
+ *
+ * Anchor: end of import section (only invariant)
+ * Idempotent. Ends with npm run build.
+ */
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
+function run(cmd) {
+  execSync(cmd, { stdio: "inherit" });
+}
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+const serverPath = path.join(ROOT, "services", "mcp-shared-server", "server.mjs");
+
+if (!fs.existsSync(serverPath)) {
+  console.error("Missing:", serverPath);
+  process.exit(1);
+}
+
+const src = fs.readFileSync(serverPath, "utf8");
+
+/* ---------- anchor on last import ---------- */
+const importMatches = [...src.matchAll(/^import .*;$/gm)];
+if (!importMatches.length) {
+  console.error("No imports found — unsafe to continue.");
+  process.exit(1);
+}
+
+const lastImport = importMatches[importMatches.length - 1];
+const prefix = src.slice(0, lastImport.index + lastImport[0].length) + "\n";
+
+/* ---------- authoritative replacement ---------- */
+const replacement = `
 const ROOT = process.env.REPO_ROOT || process.cwd();
 const PORT = Number(process.env.MCP_SHARED_PORT || 8787);
 const SHARED_ARTIFACTS_PATH = path.join(ROOT, "data", "artifacts.shared.json");
@@ -117,3 +149,12 @@ server.listen(PORT, () => {
   console.log("mcp-shared-server listening on :" + PORT);
   console.log("MCP registry keys:", Object.keys(TOOL_REGISTRY));
 });
+`;
+
+fs.writeFileSync(serverPath, prefix + replacement);
+
+console.log("Patched:", serverPath);
+console.log("== Syntax check ==");
+run("node --check " + serverPath);
+console.log("== Running build ==");
+run("npm run build");

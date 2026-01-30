@@ -1,28 +1,40 @@
 #!/usr/bin/env node
-import http from "node:http";
-import url from "node:url";
+/**
+ * Phase 10 — AUTHORITATIVE SERVER RESET
+ * Replaces ALL executable logic after helpers with a clean MCP server.
+ *
+ * Idempotent. Ends with npm run build.
+ */
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
-const ROOT = process.env.REPO_ROOT || process.cwd();
-const PORT = Number(process.env.MCP_SHARED_PORT || 8787);
+function run(cmd) {
+  execSync(cmd, { stdio: "inherit" });
+}
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+const serverPath = path.join(ROOT, "services", "mcp-shared-server", "server.mjs");
+
+if (!fs.existsSync(serverPath)) {
+  console.error("Missing:", serverPath);
+  process.exit(1);
+}
+
+const src = fs.readFileSync(serverPath, "utf8");
+
+// Split file at the last helper (toolNotFound or badRequest fallback)
+const SPLIT_RE = /(function\s+toolNotFound[\s\S]*?\}\s*)/m;
+const match = src.match(SPLIT_RE);
+if (!match) {
+  console.error("Could not find helper boundary (toolNotFound).");
+  process.exit(1);
+}
+
+const prefix = src.slice(0, match.index + match[0].length);
+
+const replacement = `
 const SHARED_ARTIFACTS_PATH = path.join(ROOT, "data", "artifacts.shared.json");
-
-function json(res, status, body) {
-  const payload = JSON.stringify(body);
-  res.writeHead(status, {
-    "content-type": "application/json",
-    "content-length": Buffer.byteLength(payload)
-  });
-  res.end(payload);
-}
-
-function assertCtx(ctx) {
-  const required = ["tenant", "actor", "purpose", "classification", "traceId"];
-  for (const k of required) {
-    if (!ctx?.[k]) throw new Error("Invalid ctx: missing " + k);
-  }
-}
 
 const TOOL_REGISTRY = {
   "shared.artifact_registry.read": {
@@ -73,6 +85,14 @@ const TOOL_REGISTRY = {
   }
 };
 
+const REQUIRED_CTX = ["tenant", "actor", "purpose", "classification", "traceId"];
+
+function assertCtx(ctx) {
+  for (const k of REQUIRED_CTX) {
+    if (!ctx?.[k]) throw new Error("Invalid ctx: missing " + k);
+  }
+}
+
 const server = http.createServer((req, res) => {
   const parsed = url.parse(req.url || "", true);
 
@@ -98,9 +118,7 @@ const server = http.createServer((req, res) => {
         const { tool, args, ctx } = JSON.parse(buf || "{}");
         assertCtx(ctx);
         const entry = TOOL_REGISTRY[tool];
-        if (!entry) {
-          return json(res, 404, { ok: false, error: { message: "Unknown tool" } });
-        }
+        if (!entry) return toolNotFound(res, tool);
         const data = await entry.handler({ tool, args, ctx });
         return json(res, 200, { ok: true, data, meta: { traceId: ctx.traceId } });
       } catch (e) {
@@ -117,3 +135,12 @@ server.listen(PORT, () => {
   console.log("mcp-shared-server listening on :" + PORT);
   console.log("MCP registry keys:", Object.keys(TOOL_REGISTRY));
 });
+`;
+
+fs.writeFileSync(serverPath, prefix + replacement);
+
+console.log("Patched:", serverPath);
+console.log("== Syntax check ==");
+run(`node --check ${serverPath}`);
+console.log("== Running build ==");
+run("npm run build");
