@@ -1,4 +1,34 @@
 #!/usr/bin/env node
+/**
+ * Phase 17A — Authoritative MCP shared server contract hardening
+ *
+ * Guarantees:
+ * - Single canonical capabilities generator
+ * - /tools is derived from /capabilities.tools (no drift)
+ * - /tool enforces:
+ *    - required ctx fields (400)
+ *    - tenant allowlist (400)
+ *    - namespace allowlist (403)
+ *    - unknown tool (404)
+ *
+ * Idempotent via full-file replacement.
+ * Ends with: npm run build
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
+
+function run(cmd) { execSync(cmd, { stdio: "inherit" }); }
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+const serverPath = path.join(ROOT, "services", "mcp-shared-server", "server.mjs");
+
+if (!fs.existsSync(serverPath)) {
+  console.error("Missing:", serverPath);
+  process.exit(1);
+}
+
+const replacement = `#!/usr/bin/env node
 import http from "node:http";
 import url from "node:url";
 import fs from "node:fs";
@@ -210,3 +240,13 @@ server.listen(PORT, () => {
   console.log("mcp-shared-server listening on :" + PORT);
   console.log("MCP registry keys:", Object.keys(TOOL_REGISTRY));
 });
+`;
+
+fs.writeFileSync(serverPath, replacement);
+console.log("Patched:", serverPath);
+
+console.log("== Syntax check (required gate) ==");
+run("node --check " + serverPath);
+
+console.log("== Running build (required) ==");
+run("npm run build");
