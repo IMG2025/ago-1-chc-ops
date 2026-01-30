@@ -1,4 +1,28 @@
 #!/usr/bin/env node
+/**
+ * Phase 18 — AUTHORITATIVE SERVER RESET (v2)
+ * Purpose:
+ * - Replace mcp-shared-server entirely
+ * - Add per-tenant registry tools (chc / ciag / hospitality)
+ * - Preserve Phase 17 contract hardening
+ *
+ * Idempotent by replacement.
+ * Ends with: npm run build
+ */
+import fs from "node:fs";
+import path from "node:path";
+import http from "node:http";
+import url from "node:url";
+import { execSync } from "node:child_process";
+
+function run(cmd) {
+  execSync(cmd, { stdio: "inherit" });
+}
+
+const ROOT = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+const serverPath = path.join(ROOT, "services", "mcp-shared-server", "server.mjs");
+
+const CONTENT = `#!/usr/bin/env node
 import http from "node:http";
 import url from "node:url";
 import fs from "node:fs";
@@ -213,3 +237,13 @@ server.listen(PORT, () => {
   console.log("mcp-shared-server listening on :" + PORT);
   console.log("MCP registry keys:", Object.keys(TOOL_REGISTRY));
 });
+`;
+
+fs.writeFileSync(serverPath, CONTENT);
+console.log("Patched:", serverPath);
+
+console.log("== Syntax check (required gate) ==");
+run("node --check " + serverPath);
+
+console.log("== Running build (required) ==");
+run("npm run build");
