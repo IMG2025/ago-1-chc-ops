@@ -14,7 +14,7 @@
     "mcp:smoke14": "node scripts/mcp_smoke_phase14.mjs"
   },
   "dependencies": {
-    "ago-1-core": "github:IMG2025/ago-1-core#master",
+    "ago-1-core": "github:IMG2025/ago-1-core#5325ba6",
     "ciag-ago-1": "file:../ciag-ago-1",
     "hospitality-ago-1": "file:../../hospitality-ago-1",
     "@chc/sentinel-core": "*"
