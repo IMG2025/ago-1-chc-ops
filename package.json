@@ -15,7 +15,9 @@
     "mcp:smoke16": "node scripts/mcp_smoke_phase16.mjs",
     "mcp:smoke17": "node scripts/mcp_smoke_phase17.mjs",
     "mcp:smoke19": "node scripts/mcp_smoke_phase19.mjs",
-    "mcp:smoke20": "node scripts/mcp_smoke_phase20.mjs"
+    "mcp:smoke20": "node scripts/mcp_smoke_phase20.mjs",
+    "mcp:smoke21": "node scripts/mcp_smoke_phase21.mjs",
+    "mcp:smoke21b": "node scripts/mcp_smoke_phase21b.mjs"
   },
   "dependencies": {
     "ago-1-core": "github:IMG2025/ago-1-core#5325ba6",

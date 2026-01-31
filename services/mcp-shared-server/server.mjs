@@ -215,6 +215,7 @@ function capabilitiesPayload() {
     ok: true,
     schema: "mcp.capabilities.v1",
       contractVersion: "21A.1.0",
+      optionalCtxFields: ["contractVersion"],
     requiredCtxFields: REQUIRED_CTX_FIELDS.slice(),
     tenants: TENANTS.slice(),
     namespaceAllowlistByTenant: TENANT_NAMESPACE_ALLOWLIST,
@@ -301,6 +302,28 @@ function handleToolCall(req, res, body) {
 
   try {
     assertCtx(ctx);
+    /* PHASE21B_CONTRACT_ENFORCEMENT */
+    const expectedContractVersion = "21A.1.0";
+    if (!ctx.contractVersion || typeof ctx.contractVersion !== "string" || !ctx.contractVersion.trim()) {
+      return toolError(
+        res,
+        400,
+        "CONTRACT_VERSION_REQUIRED",
+        "Missing ctx.contractVersion.",
+        ctx.traceId,
+        { expected: expectedContractVersion }
+      );
+    }
+    if (ctx.contractVersion !== expectedContractVersion) {
+      return toolError(
+        res,
+        409,
+        "CONTRACT_VERSION_MISMATCH",
+        "Unsupported ctx.contractVersion.",
+        ctx.traceId,
+        { expected: expectedContractVersion, got: ctx.contractVersion }
+      );
+    }
   } catch (e) {
     return toolError(res, 400, "BAD_REQUEST", e.message || "Invalid ctx.");
   }
