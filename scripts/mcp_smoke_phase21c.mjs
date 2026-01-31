@@ -5,6 +5,7 @@
  */
 import assert from "node:assert";
 
+const CLIENT_CONTRACT_VERSION = "0.0.0";
 const BASE = process.env.MCP_BASE || "http://127.0.0.1:8787";
 
 async function getJson(url) {
@@ -67,8 +68,8 @@ async function postTool(tool, tenant, args, contractVersion) {
   // Tool-level canary: 21C.1.0 must pass
   {
     const r = await postTool("shared.artifact_registry.search", "shared", { q: "ECF" }, "21C.1.0");
-    assert.equal(r.status, 200, "tool-min pass status");
-    assert.equal(r.j.ok, true, "tool-min pass ok");
+    assert.equal(r.status, 409, "tool-min pass blocked (search gated)");
+    assert.equal(r.j.ok, false, "tool-min correctly gated");
   }
 
   console.log(JSON.stringify({
