@@ -201,17 +201,20 @@ const TOOL_REGISTRY = {
 };
 
 function toolsPayload() {
-  return Object.entries(TOOL_REGISTRY).map(([name, v]) => ({
-    name,
-    version: v.version || "1.0.0",
-    description: v.description || ""
-  }));
+  return Object.entries(TOOL_REGISTRY)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, v]) => ({
+      name,
+      version: v.version || "1.0.0",
+      description: v.description || ""
+    }));
 }
 
 function capabilitiesPayload() {
   return {
     ok: true,
     schema: "mcp.capabilities.v1",
+      contractVersion: "21A.1.0",
     requiredCtxFields: REQUIRED_CTX_FIELDS.slice(),
     tenants: TENANTS.slice(),
     namespaceAllowlistByTenant: TENANT_NAMESPACE_ALLOWLIST,
