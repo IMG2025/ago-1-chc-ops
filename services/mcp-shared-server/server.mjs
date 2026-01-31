@@ -123,6 +123,81 @@ const TOOL_REGISTRY = {
     description: "Return the Hospitality tenant artifact registry.",
     handler: async ({ ctx }) => readRegistryFile("hospitality")
   }
+  ,
+  // PHASE20_TENANT_PARITY_TOOLS_V3
+  "chc.artifact_registry.readById": {
+    version: "1.0.0",
+    description: "Read CHC tenant artifact by id.",
+    handler: async ({ args, ctx }) => {
+      if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
+      const reg = readRegistryFile("chc");
+      const artifact = reg.artifacts.find((a) => a && a.id === args.id) || null;
+      return { schema: "artifact-registry.readById.v1", tenant: ctx.tenant, id: args.id, artifact };
+    }
+  },
+  "chc.artifact_registry.search": {
+    version: "1.0.0",
+    description: "Search CHC tenant artifacts.",
+    handler: async ({ args, ctx }) => {
+      const q = (args && typeof args.q === "string") ? args.q : "";
+      const reg = readRegistryFile("chc");
+      const qq = q.trim().toLowerCase();
+      const hits = qq
+        ? reg.artifacts.filter((a) => JSON.stringify(a).toLowerCase().includes(qq))
+        : reg.artifacts;
+      return { schema: "artifact-registry.search.v1", tenant: ctx.tenant, q, count: hits.length, artifacts: hits };
+    }
+  },
+
+  "ciag.artifact_registry.readById": {
+    version: "1.0.0",
+    description: "Read CIAG tenant artifact by id.",
+    handler: async ({ args, ctx }) => {
+      if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
+      const reg = readRegistryFile("ciag");
+      const artifact = reg.artifacts.find((a) => a && a.id === args.id) || null;
+      return { schema: "artifact-registry.readById.v1", tenant: ctx.tenant, id: args.id, artifact };
+    }
+  },
+  "ciag.artifact_registry.search": {
+    version: "1.0.0",
+    description: "Search CIAG tenant artifacts.",
+    handler: async ({ args, ctx }) => {
+      const q = (args && typeof args.q === "string") ? args.q : "";
+      const reg = readRegistryFile("ciag");
+      const qq = q.trim().toLowerCase();
+      const hits = qq
+        ? reg.artifacts.filter((a) => JSON.stringify(a).toLowerCase().includes(qq))
+        : reg.artifacts;
+      return { schema: "artifact-registry.search.v1", tenant: ctx.tenant, q, count: hits.length, artifacts: hits };
+    }
+  },
+
+  "hospitality.artifact_registry.readById": {
+    version: "1.0.0",
+    description: "Read Hospitality tenant artifact by id.",
+    handler: async ({ args, ctx }) => {
+      if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
+      const reg = readRegistryFile("hospitality");
+      const artifact = reg.artifacts.find((a) => a && a.id === args.id) || null;
+      return { schema: "artifact-registry.readById.v1", tenant: ctx.tenant, id: args.id, artifact };
+    }
+  },
+  "hospitality.artifact_registry.search": {
+    version: "1.0.0",
+    description: "Search Hospitality tenant artifacts.",
+    handler: async ({ args, ctx }) => {
+      const q = (args && typeof args.q === "string") ? args.q : "";
+      const reg = readRegistryFile("hospitality");
+      const qq = q.trim().toLowerCase();
+      const hits = qq
+        ? reg.artifacts.filter((a) => JSON.stringify(a).toLowerCase().includes(qq))
+        : reg.artifacts;
+      return { schema: "artifact-registry.search.v1", tenant: ctx.tenant, q, count: hits.length, artifacts: hits };
+    }
+  }
+
+
 };
 
 function toolsPayload() {
@@ -140,7 +215,78 @@ function capabilitiesPayload() {
     requiredCtxFields: REQUIRED_CTX_FIELDS.slice(),
     tenants: TENANTS.slice(),
     namespaceAllowlistByTenant: TENANT_NAMESPACE_ALLOWLIST,
-    tools: toolsPayload()
+    tools: toolsPayload(),
+
+  "chc.artifact_registry.readById": {
+    version: "1.0.0",
+    description: "Read CHC artifact by id.",
+    handler: async ({ args, ctx }) => {
+      if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
+      const reg = readRegistryFile("chc");
+      const artifact = reg.artifacts.find((a) => a && a.id === args.id) || null;
+      return { schema: "artifact-registry.readById.v1", tenant: ctx.tenant, id: args.id, artifact };
+    }
+  },
+  "chc.artifact_registry.search": {
+    version: "1.0.0",
+    description: "Search CHC artifacts.",
+    handler: async ({ args, ctx }) => {
+      const q = (args && typeof args.q === "string") ? args.q : "";
+      const reg = readRegistryFile("chc");
+      const qq = q.trim().toLowerCase();
+      const hits = qq
+        ? reg.artifacts.filter((a) => JSON.stringify(a).toLowerCase().includes(qq))
+        : reg.artifacts;
+      return { schema: "artifact-registry.search.v1", tenant: ctx.tenant, q, count: hits.length, artifacts: hits };
+    }
+  },
+  "ciag.artifact_registry.readById": {
+    version: "1.0.0",
+    description: "Read CIAG artifact by id.",
+    handler: async ({ args, ctx }) => {
+      if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
+      const reg = readRegistryFile("ciag");
+      const artifact = reg.artifacts.find((a) => a && a.id === args.id) || null;
+      return { schema: "artifact-registry.readById.v1", tenant: ctx.tenant, id: args.id, artifact };
+    }
+  },
+  "ciag.artifact_registry.search": {
+    version: "1.0.0",
+    description: "Search CIAG artifacts.",
+    handler: async ({ args, ctx }) => {
+      const q = (args && typeof args.q === "string") ? args.q : "";
+      const reg = readRegistryFile("ciag");
+      const qq = q.trim().toLowerCase();
+      const hits = qq
+        ? reg.artifacts.filter((a) => JSON.stringify(a).toLowerCase().includes(qq))
+        : reg.artifacts;
+      return { schema: "artifact-registry.search.v1", tenant: ctx.tenant, q, count: hits.length, artifacts: hits };
+    }
+  },
+  "hospitality.artifact_registry.readById": {
+    version: "1.0.0",
+    description: "Read HOSPITALITY artifact by id.",
+    handler: async ({ args, ctx }) => {
+      if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
+      const reg = readRegistryFile("hospitality");
+      const artifact = reg.artifacts.find((a) => a && a.id === args.id) || null;
+      return { schema: "artifact-registry.readById.v1", tenant: ctx.tenant, id: args.id, artifact };
+    }
+  },
+  "hospitality.artifact_registry.search": {
+    version: "1.0.0",
+    description: "Search HOSPITALITY artifacts.",
+    handler: async ({ args, ctx }) => {
+      const q = (args && typeof args.q === "string") ? args.q : "";
+      const reg = readRegistryFile("hospitality");
+      const qq = q.trim().toLowerCase();
+      const hits = qq
+        ? reg.artifacts.filter((a) => JSON.stringify(a).toLowerCase().includes(qq))
+        : reg.artifacts;
+      return { schema: "artifact-registry.search.v1", tenant: ctx.tenant, q, count: hits.length, artifacts: hits };
+    }
+  }
+
   };
 }
 
@@ -206,4 +352,62 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log("mcp-shared-server listening on :" + PORT);
   console.log("MCP registry keys:", Object.keys(TOOL_REGISTRY).sort());
+});
+
+
+/* PHASE20_V3_1_TENANT_PARITY */
+Object.assign(TOOL_REGISTRY, {
+  "chc.artifact_registry.readById": {
+    version: "1.0.0",
+    handler: async ({ args, ctx }) => {
+      const reg = readRegistryFile("chc");
+      const artifact = reg.artifacts.find(a => a?.id === args?.id) || null;
+      return { id: args.id, artifact };
+    }
+  },
+  "chc.artifact_registry.search": {
+    version: "1.0.0",
+    handler: async ({ args, ctx }) => {
+      const q = (args?.q || "").toLowerCase();
+      const reg = readRegistryFile("chc");
+      const hits = q ? reg.artifacts.filter(a => JSON.stringify(a).toLowerCase().includes(q)) : reg.artifacts;
+      return { q, count: hits.length, artifacts: hits };
+    }
+  },
+
+  "ciag.artifact_registry.readById": {
+    version: "1.0.0",
+    handler: async ({ args }) => {
+      const reg = readRegistryFile("ciag");
+      const artifact = reg.artifacts.find(a => a?.id === args?.id) || null;
+      return { id: args.id, artifact };
+    }
+  },
+  "ciag.artifact_registry.search": {
+    version: "1.0.0",
+    handler: async ({ args }) => {
+      const q = (args?.q || "").toLowerCase();
+      const reg = readRegistryFile("ciag");
+      const hits = q ? reg.artifacts.filter(a => JSON.stringify(a).toLowerCase().includes(q)) : reg.artifacts;
+      return { q, count: hits.length, artifacts: hits };
+    }
+  },
+
+  "hospitality.artifact_registry.readById": {
+    version: "1.0.0",
+    handler: async ({ args }) => {
+      const reg = readRegistryFile("hospitality");
+      const artifact = reg.artifacts.find(a => a?.id === args?.id) || null;
+      return { id: args.id, artifact };
+    }
+  },
+  "hospitality.artifact_registry.search": {
+    version: "1.0.0",
+    handler: async ({ args }) => {
+      const q = (args?.q || "").toLowerCase();
+      const reg = readRegistryFile("hospitality");
+      const hits = q ? reg.artifacts.filter(a => JSON.stringify(a).toLowerCase().includes(q)) : reg.artifacts;
+      return { q, count: hits.length, artifacts: hits };
+    }
+  }
 });
