@@ -9,6 +9,10 @@ const PORT = Number(process.env.MCP_SHARED_PORT || 8787);
 
 const TENANTS = ["shared", "chc", "ciag", "hospitality"];
 const REQUIRED_CTX_FIELDS = ["tenant", "actor", "purpose", "classification", "traceId"];
+// == Contract evolution ==
+const CONTRACT_VERSION = "21C.1.0";
+const MIN_SUPPORTED_CONTRACT_VERSION = "21A.1.0";
+// == Contract evolution ==
 
 const TENANT_NAMESPACE_ALLOWLIST = {
   shared: ["shared."],
@@ -55,6 +59,50 @@ function assertCtx(ctx) {
   }
 }
 
+function parseContractVersion(v) {
+  // Expected: "21A.1.0" -> { phase: 21, suffix: "A", patch: 1, minor: 0 }
+  // Also tolerates "21.1.0" -> suffix "".
+  if (typeof v !== "string") return null;
+  const m = v.trim().match(/^([0-9]+)([A-Za-z]?)[.]([0-9]+)[.]([0-9]+)$/);
+  if (!m) return null;
+  const phase = Number(m[1]);
+  const suffix = (m[2] || "").toUpperCase();
+  const patch = Number(m[3]);
+  const minor = Number(m[4]);
+  if (!Number.isFinite(phase) || !Number.isFinite(patch) || !Number.isFinite(minor)) return null;
+  const suffixRank = suffix ? (suffix.charCodeAt(0) - 64) : 0; // A=1, B=2...
+  return { phase, suffix, suffixRank, patch, minor, raw: v.trim() };
+}
+
+function cmpContractVersion(a, b) {
+  const A = parseContractVersion(a);
+  const B = parseContractVersion(b);
+  if (!A || !B) return null;
+  if (A.phase !== B.phase) return A.phase < B.phase ? -1 : 1;
+  if (A.suffixRank !== B.suffixRank) return A.suffixRank < B.suffixRank ? -1 : 1;
+  if (A.patch !== B.patch) return A.patch < B.patch ? -1 : 1;
+  if (A.minor !== B.minor) return A.minor < B.minor ? -1 : 1;
+  return 0;
+}
+
+function assertContractWindow(ctxVersion) {
+  // Enforce: MIN_SUPPORTED <= ctx.contractVersion <= CONTRACT_VERSION
+  const lo = cmpContractVersion(ctxVersion, MIN_SUPPORTED_CONTRACT_VERSION);
+  const hi = cmpContractVersion(ctxVersion, CONTRACT_VERSION);
+  if (lo === null || hi === null) throw new Error("Invalid ctx.contractVersion format");
+  if (lo < 0) return { ok: false, code: "CONTRACT_TOO_OLD", status: 409, details: { minSupported: MIN_SUPPORTED_CONTRACT_VERSION, got: ctxVersion } };
+  if (hi > 0) return { ok: false, code: "CONTRACT_TOO_NEW", status: 409, details: { current: CONTRACT_VERSION, got: ctxVersion } };
+  return { ok: true };
+}
+
+function assertToolMinContract(ctxVersion, minVersion) {
+  if (!minVersion) return { ok: true };
+  const c = cmpContractVersion(ctxVersion, minVersion);
+  if (c === null) throw new Error("Invalid contract version compare");
+  if (c < 0) return { ok: false, code: "CONTRACT_UNSUPPORTED_FOR_TOOL", status: 409, details: { toolMin: minVersion, got: ctxVersion } };
+  return { ok: true };
+}
+
 function isToolAllowed(tool, tenant) {
   const allowed = TENANT_NAMESPACE_ALLOWLIST[tenant] || [];
   return allowed.some((prefix) => tool.startsWith(prefix));
@@ -77,12 +125,14 @@ function readRegistryFile(tenant) {
 const TOOL_REGISTRY = {
   "shared.artifact_registry.read": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Return the shared artifact registry.",
     handler: async ({ ctx }) => readRegistryFile("shared")
   },
 
   "shared.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read shared artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -94,6 +144,7 @@ const TOOL_REGISTRY = {
 
   "shared.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21C.1.0",
     description: "Search shared artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -108,18 +159,21 @@ const TOOL_REGISTRY = {
 
   "chc.artifact_registry.read": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Return the CHC tenant artifact registry.",
     handler: async ({ ctx }) => readRegistryFile("chc")
   },
 
   "ciag.artifact_registry.read": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Return the CIAG tenant artifact registry.",
     handler: async ({ ctx }) => readRegistryFile("ciag")
   },
 
   "hospitality.artifact_registry.read": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Return the Hospitality tenant artifact registry.",
     handler: async ({ ctx }) => readRegistryFile("hospitality")
   }
@@ -127,6 +181,7 @@ const TOOL_REGISTRY = {
   // PHASE20_TENANT_PARITY_TOOLS_V3
   "chc.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read CHC tenant artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -137,6 +192,7 @@ const TOOL_REGISTRY = {
   },
   "chc.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Search CHC tenant artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -151,6 +207,7 @@ const TOOL_REGISTRY = {
 
   "ciag.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read CIAG tenant artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -161,6 +218,7 @@ const TOOL_REGISTRY = {
   },
   "ciag.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Search CIAG tenant artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -175,6 +233,7 @@ const TOOL_REGISTRY = {
 
   "hospitality.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read Hospitality tenant artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -185,6 +244,7 @@ const TOOL_REGISTRY = {
   },
   "hospitality.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Search Hospitality tenant artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -214,6 +274,8 @@ function capabilitiesPayload() {
   return {
     ok: true,
     schema: "mcp.capabilities.v1",
+      contractVersion: CONTRACT_VERSION,
+      minSupportedContractVersion: MIN_SUPPORTED_CONTRACT_VERSION,
       contractVersion: "21A.1.0",
       optionalCtxFields: ["contractVersion"],
     requiredCtxFields: REQUIRED_CTX_FIELDS.slice(),
@@ -223,6 +285,7 @@ function capabilitiesPayload() {
 
   "chc.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read CHC artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -233,6 +296,7 @@ function capabilitiesPayload() {
   },
   "chc.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Search CHC artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -246,6 +310,7 @@ function capabilitiesPayload() {
   },
   "ciag.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read CIAG artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -256,6 +321,7 @@ function capabilitiesPayload() {
   },
   "ciag.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Search CIAG artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -269,6 +335,7 @@ function capabilitiesPayload() {
   },
   "hospitality.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Read HOSPITALITY artifact by id.",
     handler: async ({ args, ctx }) => {
       if (!args || typeof args.id !== "string" || !args.id.trim()) throw new Error("Missing args.id");
@@ -279,6 +346,7 @@ function capabilitiesPayload() {
   },
   "hospitality.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     description: "Search HOSPITALITY artifacts.",
     handler: async ({ args, ctx }) => {
       const q = (args && typeof args.q === "string") ? args.q : "";
@@ -385,6 +453,7 @@ server.listen(PORT, () => {
 Object.assign(TOOL_REGISTRY, {
   "chc.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     handler: async ({ args, ctx }) => {
       const reg = readRegistryFile("chc");
       const artifact = reg.artifacts.find(a => a?.id === args?.id) || null;
@@ -393,6 +462,7 @@ Object.assign(TOOL_REGISTRY, {
   },
   "chc.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     handler: async ({ args, ctx }) => {
       const q = (args?.q || "").toLowerCase();
       const reg = readRegistryFile("chc");
@@ -403,6 +473,7 @@ Object.assign(TOOL_REGISTRY, {
 
   "ciag.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     handler: async ({ args }) => {
       const reg = readRegistryFile("ciag");
       const artifact = reg.artifacts.find(a => a?.id === args?.id) || null;
@@ -411,6 +482,7 @@ Object.assign(TOOL_REGISTRY, {
   },
   "ciag.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     handler: async ({ args }) => {
       const q = (args?.q || "").toLowerCase();
       const reg = readRegistryFile("ciag");
@@ -421,6 +493,7 @@ Object.assign(TOOL_REGISTRY, {
 
   "hospitality.artifact_registry.readById": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     handler: async ({ args }) => {
       const reg = readRegistryFile("hospitality");
       const artifact = reg.artifacts.find(a => a?.id === args?.id) || null;
@@ -429,6 +502,7 @@ Object.assign(TOOL_REGISTRY, {
   },
   "hospitality.artifact_registry.search": {
     version: "1.0.0",
+      minContractVersion: "21A.1.0",
     handler: async ({ args }) => {
       const q = (args?.q || "").toLowerCase();
       const reg = readRegistryFile("hospitality");
