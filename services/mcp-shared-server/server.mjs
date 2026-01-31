@@ -276,7 +276,7 @@ function capabilitiesPayload() {
     schema: "mcp.capabilities.v1",
       contractVersion: CONTRACT_VERSION,
       minSupportedContractVersion: MIN_SUPPORTED_CONTRACT_VERSION,
-      contractVersion: "21A.1.0",
+      contractVersion: "21C.1.0",
       optionalCtxFields: ["contractVersion"],
     requiredCtxFields: REQUIRED_CTX_FIELDS.slice(),
     tenants: TENANTS.slice(),
@@ -401,6 +401,26 @@ function handleToolCall(req, res, body) {
   }
 
   const entry = TOOL_REGISTRY[tool];
+
+    // ---- Phase 21C: per-tool minContractVersion gate ----
+    if (entry?.minContractVersion) {
+      const client = ctx.contractVersion || "0.0.0";
+      if (client < entry.minContractVersion) {
+        return toolError(
+          res,
+          409,
+          "CONTRACT_VERSION_TOO_LOW",
+          "Tool requires newer contractVersion.",
+          ctx.traceId,
+          {
+            tool,
+            expected: entry.minContractVersion,
+            received: client
+          }
+        );
+      }
+    }
+
   if (!entry) {
     return toolError(res, 404, "TOOL_NOT_FOUND", "Unknown tool", ctx.traceId, { tool });
   }

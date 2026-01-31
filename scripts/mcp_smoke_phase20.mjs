@@ -44,8 +44,7 @@ async function postTool(tool, tenant, args = {}) {
         actor: "smoke",
         purpose: "phase20",
         classification: "internal",
-        traceId: "t-" + tenant + "-" + tool
-      }
+        traceId: "t-" + tenant + "-" + tool , contractVersion: "21A.1.0" }
     })
   });
   const j = await r.json();
@@ -82,7 +81,8 @@ async function postTool(tool, tenant, args = {}) {
 
   for (const [tenant, id] of checks) {
     const { status, j } = await postTool(`${tenant}.artifact_registry.readById`, tenant, { id });
-    assert.equal(status, 200, tenant + " readById status");
+    if (status !== 200) { console.error("DEBUG_SMOKE20_RESPONSE", JSON.stringify(j, null, 2)); }
+assert.equal(status, 200, tenant + " readById status");
     assert.equal(j.ok, true, tenant + " ok");
     assert.equal(extractIdFromReadByIdResponse(j), id, tenant + " seed id mismatch");
   }
@@ -90,7 +90,8 @@ async function postTool(tool, tenant, args = {}) {
   // Search must return at least 1 result for "ECF"
   for (const tenant of ["chc","ciag","hospitality"]) {
     const { status, j } = await postTool(`${tenant}.artifact_registry.search`, tenant, { q: "ECF" });
-    assert.equal(status, 200, tenant + " search status");
+    if (status !== 200) { console.error("DEBUG_SMOKE20_RESPONSE", JSON.stringify(j, null, 2)); }
+assert.equal(status, 200, tenant + " search status");
     assert.equal(j.ok, true, tenant + " search ok");
     assert((j.data?.count ?? 0) >= 1, tenant + " search count < 1");
   }
