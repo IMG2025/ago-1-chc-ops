@@ -1,0 +1,63 @@
+{
+  "framework": "HIPAA",
+  "version": "2023",
+  "controls": [
+    {
+      "id": "164.308(a)(1)(ii)(D)",
+      "category": "Administrative Safeguards",
+      "control": "Information System Activity Review",
+      "implemented": true,
+      "evidence": [
+        "Complete audit trail system",
+        "Immutable log storage",
+        "Regular audit log review capability"
+      ]
+    },
+    {
+      "id": "164.308(a)(3)(i)",
+      "category": "Administrative Safeguards",
+      "control": "Workforce Security - Authorization/Supervision",
+      "implemented": true,
+      "evidence": [
+        "Agent authorization system",
+        "Capability-based permissions",
+        "Human approval for high-risk actions"
+      ]
+    },
+    {
+      "id": "164.308(a)(5)(ii)(C)",
+      "category": "Administrative Safeguards",
+      "control": "Log-in Monitoring",
+      "implemented": true,
+      "evidence": [
+        "Anomaly detection",
+        "Failed authorization tracking",
+        "Suspicious activity alerts"
+      ]
+    },
+    {
+      "id": "164.312(a)(1)",
+      "category": "Technical Safeguards",
+      "control": "Access Control",
+      "implemented": true,
+      "evidence": [
+        "RBAC enforcement",
+        "Scope-based access control",
+        "Minimum necessary access principle"
+      ]
+    },
+    {
+      "id": "164.312(b)",
+      "category": "Technical Safeguards",
+      "control": "Audit Controls",
+      "implemented": true,
+      "evidence": [
+        "Sentinel audit trail",
+        "Forensic replay capability",
+        "Complete decision logging"
+      ]
+    }
+  ],
+  "applicability": "AI systems processing PHI",
+  "status": "Compliant"
+}

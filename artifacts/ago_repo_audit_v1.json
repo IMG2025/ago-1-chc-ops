@@ -1,0 +1,120 @@
+{
+  "repoRoot": "/data/data/com.termux/files/home/work/ago-1-chc-ops",
+  "timestamp": "2026-02-14T02:57:38.872Z",
+  "environment": {
+    "platform": "android",
+    "arch": "arm64",
+    "termux": true,
+    "node": "v24.12.0",
+    "npm": "11.6.2"
+  },
+  "git": {
+    "cleanTree": false,
+    "statusPorcelain": "?? scripts/audit_ago_repo_v1.mjs"
+  },
+  "specMatch": {
+    "percent": 65,
+    "totalWeight": 23,
+    "passWeight": 15
+  },
+  "checks": [
+    {
+      "id": "env.termux",
+      "desc": "Running inside Termux (PREFIX contains com.termux)",
+      "pass": true,
+      "weight": 1,
+      "evidence": "PREFIX=/data/data/com.termux/files/usr"
+    },
+    {
+      "id": "env.node",
+      "desc": "Node available",
+      "pass": true,
+      "weight": 2,
+      "evidence": "node=v24.12.0"
+    },
+    {
+      "id": "env.npm",
+      "desc": "npm available",
+      "pass": true,
+      "weight": 2,
+      "evidence": "npm=11.6.2"
+    },
+    {
+      "id": "repo.git",
+      "desc": "Git repo present",
+      "pass": true,
+      "weight": 1,
+      "evidence": ""
+    },
+    {
+      "id": "repo.cleanTree",
+      "desc": "Working tree clean (no uncommitted changes)",
+      "pass": false,
+      "weight": 2,
+      "evidence": "?? scripts/audit_ago_repo_v1.mjs"
+    },
+    {
+      "id": "pkg.build",
+      "desc": "package.json has scripts.build",
+      "pass": true,
+      "weight": 3,
+      "evidence": "tsc -p tsconfig.json"
+    },
+    {
+      "id": "pkg.typecheck",
+      "desc": "package.json has scripts.typecheck or scripts.check",
+      "pass": false,
+      "weight": 1,
+      "evidence": ""
+    },
+    {
+      "id": "ts.tsconfig",
+      "desc": "tsconfig present",
+      "pass": true,
+      "weight": 2,
+      "evidence": "found"
+    },
+    {
+      "id": "fs.scriptsDir",
+      "desc": "scripts/ directory present",
+      "pass": true,
+      "weight": 1,
+      "evidence": "found"
+    },
+    {
+      "id": "fs.mjsScripts",
+      "desc": "scripts/ contains .mjs automation scripts",
+      "pass": true,
+      "weight": 2,
+      "evidence": "present"
+    },
+    {
+      "id": "fs.docsDir",
+      "desc": "docs/ directory present (runbooks/specs live here)",
+      "pass": true,
+      "weight": 1,
+      "evidence": "found"
+    },
+    {
+      "id": "docs.runbook",
+      "desc": "Runbook present in docs/ (name contains 'runbook')",
+      "pass": false,
+      "weight": 2,
+      "evidence": "absent"
+    },
+    {
+      "id": "qa.testsDir",
+      "desc": "Tests directory present",
+      "pass": false,
+      "weight": 2,
+      "evidence": "absent"
+    },
+    {
+      "id": "qa.golden",
+      "desc": "Golden path script present (scripts contains 'golden')",
+      "pass": false,
+      "weight": 1,
+      "evidence": "absent"
+    }
+  ]
+}

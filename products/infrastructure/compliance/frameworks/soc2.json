@@ -1,0 +1,67 @@
+{
+  "framework": "SOC2 Type II",
+  "version": "2023",
+  "controls": [
+    {
+      "id": "CC6.1",
+      "category": "Logical and Physical Access Controls",
+      "control": "The entity implements logical access security software, infrastructure, and architectures over protected information assets to protect them from security events",
+      "implemented": true,
+      "evidence": [
+        "RBAC implementation in MCP Server",
+        "Kill switch emergency controls",
+        "Audit trail of all access decisions"
+      ]
+    },
+    {
+      "id": "CC6.6",
+      "category": "Logical and Physical Access Controls",
+      "control": "The entity implements logical access security measures to protect against threats from sources outside its system boundaries",
+      "implemented": true,
+      "evidence": [
+        "Multi-tenant isolation",
+        "Cross-domain spoofing prevention",
+        "Scope validation and enforcement"
+      ]
+    },
+    {
+      "id": "CC7.2",
+      "category": "System Operations",
+      "control": "The entity monitors system components and the operation of those components for anomalies that are indicative of malicious acts, natural disasters, and errors",
+      "implemented": true,
+      "evidence": [
+        "Anomaly detection system",
+        "Behavioral monitoring",
+        "Auto-suspension on critical anomalies"
+      ]
+    },
+    {
+      "id": "CC7.3",
+      "category": "System Operations",
+      "control": "The entity evaluates security events to determine whether they could or have resulted in a failure of the system",
+      "implemented": true,
+      "evidence": [
+        "Sentinel audit trail",
+        "Event categorization and severity",
+        "Automated alerting system"
+      ]
+    },
+    {
+      "id": "CC8.1",
+      "category": "Change Management",
+      "control": "The entity authorizes, designs, develops or acquires, configures, documents, tests, approves, and implements changes to infrastructure, data, software, and procedures",
+      "implemented": true,
+      "evidence": [
+        "Policy version control",
+        "Change approval workflow",
+        "Deployment automation with gates"
+      ]
+    }
+  ],
+  "attestation": {
+    "scope": "AI Governance Platform",
+    "period": "12 months",
+    "auditor": "TBD",
+    "status": "In Progress"
+  }
+}

@@ -1,6 +1,6 @@
 import { hospitalityExecutorSpec, ciagExecutorSpec, chcExecutorSpec } from "./executors.js";
 import { DomainRegistry } from "./registry";
-export { registerCIAG } from "ciag-ago-1";
+// export { registerCIAG } from "ciag-ago-1";  // TODO: Re-enable when ciag-ago-1 is published
 /**
  * Minimal registry surface needed by domain plugins.
  * We keep this intentionally small to avoid coupling CHC Ops to core internals.
