@@ -1,0 +1,42 @@
+{
+  "framework": "HIPAA",
+  "version": "2023",
+  "applicability": "Healthcare organizations handling PHI",
+  "controls": [
+    {
+      "id": "164.308(a)(1)(ii)(D)",
+      "category": "Administrative Safeguards",
+      "requirement": "Information System Activity Review",
+      "implementation": "Complete audit trail with immutable logging",
+      "evidence": ["Sentinel audit system", "Query capabilities", "Retention policies"]
+    },
+    {
+      "id": "164.308(a)(3)(i)",
+      "category": "Administrative Safeguards",
+      "requirement": "Workforce Authorization",
+      "implementation": "Agent authorization system with capability controls",
+      "evidence": ["RBAC system", "Agent permissions", "Approval workflows"]
+    },
+    {
+      "id": "164.312(a)(1)",
+      "category": "Technical Safeguards",
+      "requirement": "Access Control",
+      "implementation": "Scope-based access with minimum necessary principle",
+      "evidence": ["Access controls", "Audit logs", "Kill switches"]
+    },
+    {
+      "id": "164.312(b)",
+      "category": "Technical Safeguards",
+      "requirement": "Audit Controls",
+      "implementation": "Hardware, software, procedural mechanisms to record and examine activity",
+      "evidence": ["Audit trail", "Anomaly detection", "Forensic replay"]
+    }
+  ],
+  "deployment_requirements": [
+    "All AI agents accessing PHI must operate at Tier 4",
+    "Human physician approval required for clinical decisions",
+    "Encryption at rest and in transit",
+    "Breach notification procedures in place",
+    "Regular security risk assessments"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "domainName": "legal",
+  "description": "AI governance for legal industry",
+  "allowedAgentClasses": ["Observer", "Advisor", "Executor", "Coordinator", "Auditor"],
+  "requiresHumanApproval": ["tier3", "tier4"],
+  "auditEnabled": true,
+  "anomalyDetectionEnabled": true
+}

@@ -1,0 +1,456 @@
+{
+  "catalog_version": "1.0.0",
+  "total_agents": 100,
+  "categories": {
+    "customer-facing": {
+      "name": "Customer-Facing",
+      "agents": [
+        {
+          "agentId": "customer-service-rep-v1",
+          "name": "Customer Service Representative",
+          "description": "Handles support tickets, FAQs, and basic troubleshooting",
+          "capabilities": ["ticket_reading", "response_drafting", "issue_routing"],
+          "governance": { "tier": "tier1", "requiresApproval": ["escalations"] },
+          "integrations": ["Zendesk", "Intercom", "Salesforce Service Cloud"],
+          "pricing": { "base": 500, "perUnit": 0.05, "unit": "interaction" },
+          "metrics": {
+            "avgResponseTime": "30 seconds",
+            "accuracy": "94%",
+            "satisfaction": "4.6/5"
+          }
+        },
+        {
+          "agentId": "sales-development-rep-v1",
+          "name": "Sales Development Rep (SDR)",
+          "description": "Lead qualification, outreach, and meeting scheduling",
+          "capabilities": ["email_outreach", "lead_scoring", "calendar_booking"],
+          "governance": { "tier": "tier1", "requiresApproval": ["outreach_campaigns"] },
+          "integrations": ["Salesforce", "HubSpot", "Outreach", "SalesLoft"],
+          "pricing": { "base": 1500, "perUnit": 2, "unit": "qualified_lead" },
+          "metrics": {
+            "conversionRate": "18%",
+            "meetingsBooked": "12/week",
+            "roi": "300%"
+          }
+        },
+        {
+          "agentId": "account-manager-v1",
+          "name": "Account Manager",
+          "description": "Customer health monitoring and upsell identification",
+          "capabilities": ["usage_analysis", "churn_prediction", "expansion_opportunities"],
+          "governance": { "tier": "tier2", "requiresApproval": ["contract_changes"] },
+          "integrations": ["Salesforce", "Gainsight", "ChurnZero"],
+          "pricing": { "base": 2000 },
+          "metrics": {
+            "churnReduction": "15%",
+            "upsellRate": "22%",
+            "nps": "+35"
+          }
+        },
+        {
+          "agentId": "technical-support-specialist-v1",
+          "name": "Technical Support Specialist",
+          "description": "Advanced technical troubleshooting and issue resolution",
+          "capabilities": ["log_analysis", "debugging_assistance", "solution_recommendation"],
+          "governance": { "tier": "tier2", "requiresApproval": ["system_changes"] },
+          "integrations": ["Jira", "PagerDuty", "GitHub", "Slack"],
+          "pricing": { "base": 800, "perUnit": 0.10, "unit": "ticket" },
+          "metrics": {
+            "resolutionTime": "45 min avg",
+            "firstCallResolution": "68%",
+            "satisfaction": "4.7/5"
+          }
+        },
+        {
+          "agentId": "chat-support-agent-v1",
+          "name": "Live Chat Support Agent",
+          "description": "Real-time chat support with instant responses",
+          "capabilities": ["chat_handling", "multi_chat", "quick_responses"],
+          "governance": { "tier": "tier1", "requiresApproval": ["refunds"] },
+          "integrations": ["Intercom", "Drift", "LiveChat", "Zendesk Chat"],
+          "pricing": { "base": 600, "perUnit": 0.03, "unit": "chat" },
+          "metrics": {
+            "concurrentChats": "5",
+            "responseTime": "5 seconds",
+            "satisfaction": "4.5/5"
+          }
+        }
+      ]
+    },
+    "operations": {
+      "name": "Operations & Automation",
+      "agents": [
+        {
+          "agentId": "data-entry-specialist-v1",
+          "name": "Data Entry Specialist",
+          "description": "Extract, transform, and load data across systems",
+          "capabilities": ["document_parsing", "data_validation", "system_updates"],
+          "governance": { "tier": "tier2", "requiresApproval": ["large_batch_updates"] },
+          "integrations": ["Any database", "APIs", "Spreadsheets"],
+          "pricing": { "base": 300, "perUnit": 0.01, "unit": "record" },
+          "metrics": {
+            "accuracy": "99.2%",
+            "speed": "500 records/hour",
+            "errorRate": "0.8%"
+          }
+        },
+        {
+          "agentId": "invoice-processing-clerk-v1",
+          "name": "Invoice Processing Clerk",
+          "description": "Invoice data extraction and approval routing",
+          "capabilities": ["ocr", "validation", "erp_integration"],
+          "governance": { "tier": "tier2", "requiresApproval": ["invoices_over_1000"] },
+          "integrations": ["QuickBooks", "NetSuite", "SAP", "Oracle"],
+          "pricing": { "base": 800, "perUnit": 0.50, "unit": "invoice" },
+          "metrics": {
+            "processingTime": "2 min avg",
+            "accuracy": "97%",
+            "costSavings": "$45K/year"
+          }
+        },
+        {
+          "agentId": "scheduling-coordinator-v1",
+          "name": "Scheduling Coordinator",
+          "description": "Calendar management and meeting scheduling",
+          "capabilities": ["calendar_api", "conflict_resolution", "optimization"],
+          "governance": { "tier": "tier1", "requiresApproval": ["vip_meetings"] },
+          "integrations": ["Google Calendar", "Outlook", "Calendly"],
+          "pricing": { "base": 400 },
+          "metrics": {
+            "timeSaved": "8 hours/week",
+            "conflictRate": "< 1%",
+            "satisfaction": "4.8/5"
+          }
+        },
+        {
+          "agentId": "email-manager-v1",
+          "name": "Email Management Assistant",
+          "description": "Email categorization, priority flagging, and response drafting",
+          "capabilities": ["email_sorting", "priority_detection", "draft_responses"],
+          "governance": { "tier": "tier1", "requiresApproval": ["important_emails"] },
+          "integrations": ["Gmail", "Outlook", "Office 365"],
+          "pricing": { "base": 350 },
+          "metrics": {
+            "emailsProcessed": "200+/day",
+            "timeRecovered": "1.5 hours/day",
+            "accuracy": "92%"
+          }
+        },
+        {
+          "agentId": "document-processor-v1",
+          "name": "Document Processor",
+          "description": "Document classification, extraction, and routing",
+          "capabilities": ["document_classification", "text_extraction", "routing"],
+          "governance": { "tier": "tier1", "requiresApproval": ["confidential_docs"] },
+          "integrations": ["SharePoint", "Google Drive", "Dropbox"],
+          "pricing": { "base": 500, "perUnit": 0.25, "unit": "document" },
+          "metrics": {
+            "processingSpeed": "100 docs/hour",
+            "accuracy": "95%",
+            "roi": "400%"
+          }
+        }
+      ]
+    },
+    "analysis": {
+      "name": "Analysis & Insights",
+      "agents": [
+        {
+          "agentId": "business-intelligence-analyst-v1",
+          "name": "Business Intelligence Analyst",
+          "description": "Data analysis, trend identification, and report generation",
+          "capabilities": ["sql_queries", "dashboard_creation", "insight_generation"],
+          "governance": { "tier": "tier1", "requiresApproval": ["data_exports"] },
+          "integrations": ["Tableau", "Power BI", "Looker", "Databases"],
+          "pricing": { "base": 1800 },
+          "metrics": {
+            "reportsGenerated": "50+/month",
+            "insightAccuracy": "89%",
+            "timeSavings": "20 hours/week"
+          }
+        },
+        {
+          "agentId": "financial-analyst-v1",
+          "name": "Financial Analyst",
+          "description": "Financial modeling, variance analysis, and forecasting",
+          "capabilities": ["spreadsheet_analysis", "scenario_modeling", "kpi_tracking"],
+          "governance": { "tier": "tier1", "requiresApproval": ["budget_recommendations"] },
+          "integrations": ["Excel", "Google Sheets", "Financial Systems"],
+          "pricing": { "base": 2500 },
+          "metrics": {
+            "forecastAccuracy": "91%",
+            "modelsCreated": "25/month",
+            "valueAdded": "$150K/year"
+          }
+        },
+        {
+          "agentId": "market-research-analyst-v1",
+          "name": "Market Research Analyst",
+          "description": "Competitive analysis, market trends, and customer insights",
+          "capabilities": ["web_research", "data_aggregation", "report_generation"],
+          "governance": { "tier": "tier0", "requiresApproval": ["none"] },
+          "integrations": ["Web APIs", "Databases", "Research Platforms"],
+          "pricing": { "base": 1200 },
+          "metrics": {
+            "reportsPerMonth": "15",
+            "competitorsCovered": "50+",
+            "insights": "Continuous"
+          }
+        },
+        {
+          "agentId": "customer-insights-analyst-v1",
+          "name": "Customer Insights Analyst",
+          "description": "Customer behavior analysis and segmentation",
+          "capabilities": ["behavior_analysis", "segmentation", "churn_prediction"],
+          "governance": { "tier": "tier1", "requiresApproval": ["segment_changes"] },
+          "integrations": ["CRM", "Analytics", "Customer Data Platform"],
+          "pricing": { "base": 1500 },
+          "metrics": {
+            "segmentAccuracy": "87%",
+            "churnPrediction": "82%",
+            "retentionImpact": "+12%"
+          }
+        },
+        {
+          "agentId": "sales-analyst-v1",
+          "name": "Sales Performance Analyst",
+          "description": "Sales metrics analysis and performance tracking",
+          "capabilities": ["pipeline_analysis", "forecast_modeling", "rep_performance"],
+          "governance": { "tier": "tier1", "requiresApproval": ["forecast_changes"] },
+          "integrations": ["Salesforce", "HubSpot", "Sales Analytics"],
+          "pricing": { "base": 1400 },
+          "metrics": {
+            "forecastAccuracy": "88%",
+            "dealAnalysis": "100%",
+            "insights": "Weekly"
+          }
+        }
+      ]
+    },
+    "content": {
+      "name": "Content & Creative",
+      "agents": [
+        {
+          "agentId": "content-writer-v1",
+          "name": "Content Writer",
+          "description": "Blog posts, social media, and marketing copy",
+          "capabilities": ["content_generation", "seo_optimization", "brand_voice"],
+          "governance": { "tier": "tier1", "requiresApproval": ["published_content"] },
+          "integrations": ["WordPress", "Medium", "Social Platforms"],
+          "pricing": { "base": 800, "perUnit": 0.10, "unit": "word" },
+          "metrics": {
+            "wordsPerDay": "2000+",
+            "seoScore": "85/100",
+            "engagement": "+45%"
+          }
+        },
+        {
+          "agentId": "social-media-manager-v1",
+          "name": "Social Media Manager",
+          "description": "Post scheduling, engagement monitoring, response drafting",
+          "capabilities": ["content_calendar", "sentiment_analysis", "response_suggestions"],
+          "governance": { "tier": "tier1", "requiresApproval": ["posts"] },
+          "integrations": ["Buffer", "Hootsuite", "Sprout Social"],
+          "pricing": { "base": 600 },
+          "metrics": {
+            "postsPerWeek": "20",
+            "engagement": "+35%",
+            "responsetime": "< 1 hour"
+          }
+        },
+        {
+          "agentId": "video-editor-assistant-v1",
+          "name": "Video Editor Assistant",
+          "description": "Rough cuts, transcription, subtitle generation",
+          "capabilities": ["video_analysis", "scene_detection", "auto_editing"],
+          "governance": { "tier": "tier1", "requiresApproval": ["final_cuts"] },
+          "integrations": ["Premiere", "Final Cut", "DaVinci Resolve"],
+          "pricing": { "base": 1000 },
+          "metrics": {
+            "editingSpeed": "50% faster",
+            "qualityScore": "4.5/5",
+            "timeSaved": "15 hours/week"
+          }
+        },
+        {
+          "agentId": "graphic-designer-assistant-v1",
+          "name": "Graphic Designer Assistant",
+          "description": "Design mockups, template generation, and asset creation",
+          "capabilities": ["design_generation", "template_creation", "brand_compliance"],
+          "governance": { "tier": "tier1", "requiresApproval": ["client_facing"] },
+          "integrations": ["Figma", "Canva", "Adobe Creative Cloud"],
+          "pricing": { "base": 900 },
+          "metrics": {
+            "designsPerWeek": "30+",
+            "revisions": "1.5 avg",
+            "satisfaction": "4.6/5"
+          }
+        },
+        {
+          "agentId": "copyeditor-v1",
+          "name": "Copy Editor",
+          "description": "Grammar checking, style consistency, and proofreading",
+          "capabilities": ["grammar_checking", "style_enforcement", "fact_checking"],
+          "governance": { "tier": "tier0", "requiresApproval": ["none"] },
+          "integrations": ["Google Docs", "Word", "Content Management Systems"],
+          "pricing": { "base": 400, "perUnit": 0.05, "unit": "word" },
+          "metrics": {
+            "accuracy": "98%",
+            "speed": "5000 words/hour",
+            "errorDetection": "99%"
+          }
+        }
+      ]
+    },
+    "hr": {
+      "name": "HR & Recruiting",
+      "agents": [
+        {
+          "agentId": "recruiting-coordinator-v1",
+          "name": "Recruiting Coordinator",
+          "description": "Resume screening, interview scheduling, candidate communication",
+          "capabilities": ["resume_screening", "scheduling", "candidate_comms"],
+          "governance": { "tier": "tier1", "requiresApproval": ["offers"] },
+          "integrations": ["Greenhouse", "Lever", "Workday"],
+          "pricing": { "base": 1200, "perUnit": 5, "unit": "candidate" },
+          "metrics": {
+            "screeningSpeed": "3x faster",
+            "qualityScore": "4.4/5",
+            "timeToHire": "-30%"
+          }
+        },
+        {
+          "agentId": "hr-assistant-v1",
+          "name": "HR Assistant",
+          "description": "Employee onboarding, policy questions, benefits enrollment",
+          "capabilities": ["document_generation", "faq_responses", "workflow_automation"],
+          "governance": { "tier": "tier1", "requiresApproval": ["policy_exceptions"] },
+          "integrations": ["BambooHR", "Rippling", "Gusto"],
+          "pricing": { "base": 800 },
+          "metrics": {
+            "inquiriesHandled": "100+/week",
+            "satisfaction": "4.7/5",
+            "efficiency": "+40%"
+          }
+        },
+        {
+          "agentId": "performance-review-analyst-v1",
+          "name": "Performance Review Analyst",
+          "description": "Review aggregation, trend analysis, feedback synthesis",
+          "capabilities": ["data_analysis", "pattern_recognition", "report_generation"],
+          "governance": { "tier": "tier1", "requiresApproval": ["performance_decisions"] },
+          "integrations": ["Lattice", "15Five", "Culture Amp"],
+          "pricing": { "base": 1000 },
+          "metrics": {
+            "reviewsAnalyzed": "500+/cycle",
+            "insightQuality": "4.6/5",
+            "managerTime": "-25%"
+          }
+        },
+        {
+          "agentId": "training-coordinator-v1",
+          "name": "Training & Development Coordinator",
+          "description": "Learning path recommendations and skill gap analysis",
+          "capabilities": ["skill_assessment", "course_recommendation", "progress_tracking"],
+          "governance": { "tier": "tier1", "requiresApproval": ["training_budgets"] },
+          "integrations": ["LMS", "LinkedIn Learning", "Udemy"],
+          "pricing": { "base": 700 },
+          "metrics": {
+            "recommendationAccuracy": "89%",
+            "completionRate": "+35%",
+            "skillGrowth": "+28%"
+          }
+        },
+        {
+          "agentId": "employee-engagement-monitor-v1",
+          "name": "Employee Engagement Monitor",
+          "description": "Sentiment analysis and engagement tracking",
+          "capabilities": ["sentiment_analysis", "survey_analysis", "alert_generation"],
+          "governance": { "tier": "tier1", "requiresApproval": ["interventions"] },
+          "integrations": ["Survey Tools", "Slack", "Communication Platforms"],
+          "pricing": { "base": 900 },
+          "metrics": {
+            "sentimentAccuracy": "84%",
+            "earlyWarning": "15 days avg",
+            "retentionImpact": "+18%"
+          }
+        }
+      ]
+    },
+    "legal": {
+      "name": "Legal & Compliance",
+      "agents": [
+        {
+          "agentId": "contract-review-assistant-v1",
+          "name": "Contract Review Assistant",
+          "description": "Contract analysis, risk flagging, and clause comparison",
+          "capabilities": ["nlp_analysis", "risk_scoring", "clause_comparison"],
+          "governance": { "tier": "tier1", "requiresApproval": ["attorney_review_always"] },
+          "integrations": ["DocuSign", "PandaDoc", "CLM Systems"],
+          "pricing": { "base": 2000, "perUnit": 10, "unit": "contract" },
+          "metrics": {
+            "reviewSpeed": "10x faster",
+            "riskDetection": "96%",
+            "attorneyTime": "-60%"
+          }
+        },
+        {
+          "agentId": "compliance-monitor-v1",
+          "name": "Compliance Monitor",
+          "description": "Regulatory tracking, policy updates, audit preparation",
+          "capabilities": ["regulation_monitoring", "gap_analysis", "documentation"],
+          "governance": { "tier": "tier0", "requiresApproval": ["policy_changes"] },
+          "integrations": ["Compliance Software", "Document Systems"],
+          "pricing": { "base": 1800 },
+          "metrics": {
+            "regulationsCovered": "50+",
+            "updateSpeed": "Real-time",
+            "auditReadiness": "95%"
+          }
+        },
+        {
+          "agentId": "legal-research-assistant-v1",
+          "name": "Legal Research Assistant",
+          "description": "Case law research, citation verification, memo drafting",
+          "capabilities": ["legal_search", "case_analysis", "memo_writing"],
+          "governance": { "tier": "tier0", "requiresApproval": ["attorney_oversight"] },
+          "integrations": ["Westlaw", "LexisNexis", "Casetext"],
+          "pricing": { "base": 2500 },
+          "metrics": {
+            "researchSpeed": "5x faster",
+            "citationAccuracy": "99%",
+            "comprehensiveness": "Excellent"
+          }
+        },
+        {
+          "agentId": "ip-management-assistant-v1",
+          "name": "IP Management Assistant",
+          "description": "Patent tracking, trademark monitoring, IP portfolio management",
+          "capabilities": ["ip_tracking", "deadline_management", "portfolio_analysis"],
+          "governance": { "tier": "tier1", "requiresApproval": ["filings"] },
+          "integrations": ["IP Management Systems", "USPTO", "Patent Databases"],
+          "pricing": { "base": 1500 },
+          "metrics": {
+            "deadlinesMissed": "0",
+            "portfolioOptimization": "+20%",
+            "costSavings": "$50K/year"
+          }
+        },
+        {
+          "agentId": "privacy-compliance-officer-v1",
+          "name": "Privacy Compliance Officer",
+          "description": "GDPR/CCPA compliance, data mapping, privacy requests",
+          "capabilities": ["data_mapping", "request_processing", "compliance_reporting"],
+          "governance": { "tier": "tier2", "requiresApproval": ["data_deletions"] },
+          "integrations": ["Privacy Management", "Data Systems"],
+          "pricing": { "base": 1600 },
+          "metrics": {
+            "requestResponseTime": "< 24 hours",
+            "complianceScore": "98%",
+            "breachRisk": "-75%"
+          }
+        }
+      ]
+    }
+  }
+}

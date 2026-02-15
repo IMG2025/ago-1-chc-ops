@@ -1,0 +1,8 @@
+{
+  "domainName": "transportation",
+  "description": "AI governance for transportation industry",
+  "allowedAgentClasses": ["Observer", "Advisor", "Executor", "Coordinator", "Auditor"],
+  "requiresHumanApproval": ["tier3", "tier4"],
+  "auditEnabled": true,
+  "anomalyDetectionEnabled": true
+}

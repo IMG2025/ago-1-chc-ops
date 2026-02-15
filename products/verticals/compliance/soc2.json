@@ -1,0 +1,42 @@
+{
+  "framework": "SOC2 Type II",
+  "version": "2023",
+  "applicability": "All service organizations",
+  "controls": [
+    {
+      "id": "CC6.1",
+      "category": "Logical and Physical Access Controls",
+      "requirement": "Logical access security over protected information",
+      "implementation": "RBAC, kill switches, audit trail",
+      "evidence": ["Authorization system", "Emergency controls", "Access logs"]
+    },
+    {
+      "id": "CC6.6",
+      "category": "Logical and Physical Access Controls",
+      "requirement": "Protect against external threats",
+      "implementation": "Multi-tenant isolation, scope validation",
+      "evidence": ["Tenant separation", "Cross-domain prevention", "Security monitoring"]
+    },
+    {
+      "id": "CC7.2",
+      "category": "System Operations",
+      "requirement": "Monitor for anomalies",
+      "implementation": "Anomaly detection with auto-suspension",
+      "evidence": ["Behavioral monitoring", "Alert system", "Automated response"]
+    },
+    {
+      "id": "CC8.1",
+      "category": "Change Management",
+      "requirement": "Authorize and document changes",
+      "implementation": "Policy version control, change approval",
+      "evidence": ["Version tracking", "Approval workflows", "Deployment gates"]
+    }
+  ],
+  "deployment_requirements": [
+    "All system changes documented and approved",
+    "Continuous monitoring enabled",
+    "Incident response procedures established",
+    "Regular penetration testing",
+    "Third-party audit readiness"
+  ]
+}

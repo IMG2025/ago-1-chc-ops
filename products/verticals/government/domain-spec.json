@@ -1,0 +1,8 @@
+{
+  "domainName": "government",
+  "description": "AI governance for government industry",
+  "allowedAgentClasses": ["Observer", "Advisor", "Executor", "Coordinator", "Auditor"],
+  "requiresHumanApproval": ["tier3", "tier4"],
+  "auditEnabled": true,
+  "anomalyDetectionEnabled": true
+}

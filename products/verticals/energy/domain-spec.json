@@ -1,0 +1,8 @@
+{
+  "domainName": "energy",
+  "description": "AI governance for energy industry",
+  "allowedAgentClasses": ["Observer", "Advisor", "Executor", "Coordinator", "Auditor"],
+  "requiresHumanApproval": ["tier3", "tier4"],
+  "auditEnabled": true,
+  "anomalyDetectionEnabled": true
+}

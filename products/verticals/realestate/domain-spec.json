@@ -1,0 +1,8 @@
+{
+  "domainName": "realestate",
+  "description": "AI governance for realestate industry",
+  "allowedAgentClasses": ["Observer", "Advisor", "Executor", "Coordinator", "Auditor"],
+  "requiresHumanApproval": ["tier3", "tier4"],
+  "auditEnabled": true,
+  "anomalyDetectionEnabled": true
+}
