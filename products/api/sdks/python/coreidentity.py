@@ -32,8 +32,9 @@ class CoreIdentityClient:
                 "payload": payload,
                 "priority": priority
             },
-            headers=self.headers
-        )
+            headers=self.headers,
+                timeout=30
+            )
         response.raise_for_status()
         return response.json()
     
@@ -41,8 +42,9 @@ class CoreIdentityClient:
         """Get task status and results"""
         response = requests.get(
             f"{self.base_url}/v1/tasks/{task_id}",
-            headers=self.headers
-        )
+            headers=self.headers,
+                timeout=30
+            )
         response.raise_for_status()
         return response.json()
     
@@ -70,8 +72,9 @@ class CoreIdentityClient:
         """Get usage statistics"""
         response = requests.get(
             f"{self.base_url}/v1/usage",
-            headers=self.headers
-        )
+            headers=self.headers,
+                timeout=30
+            )
         response.raise_for_status()
         return response.json()
 
