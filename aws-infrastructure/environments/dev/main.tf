@@ -22,7 +22,6 @@ provider "aws" {
     tags = {
       Project     = "CoreIdentity"
       Environment = "dev"
-      ManagedBy   = "Terraform"
     }
   }
 }
@@ -56,8 +55,4 @@ output "cluster_name" {
 
 output "database_endpoint" {
   value = module.database.endpoint
-}
-
-output "vpc_id" {
-  value = module.networking.vpc_id
 }
