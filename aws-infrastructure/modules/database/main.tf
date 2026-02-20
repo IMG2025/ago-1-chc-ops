@@ -10,11 +10,10 @@ resource "random_password" "db_password" {
 resource "aws_db_instance" "main" {
   identifier           = "coreidentity-${var.environment}"
   engine               = "postgres"
-  engine_version       = "16"
   instance_class       = var.environment == "prod" ? "db.t3.small" : "db.t3.micro"
   allocated_storage    = 20
   db_name              = "coreidentity"
-  username             = "admin"
+  username             = "dbadmin"
   password             = random_password.db_password.result
   skip_final_snapshot  = true
   publicly_accessible  = false
@@ -30,4 +29,8 @@ output "endpoint" {
 
 output "database_name" {
   value = aws_db_instance.main.db_name
+}
+
+output "username" {
+  value = aws_db_instance.main.username
 }
