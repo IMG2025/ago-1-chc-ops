@@ -19,7 +19,7 @@ on:
           - prod
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-2
   TERRAFORM_VERSION: 1.6.0
 
 jobs:
@@ -102,3 +102,10 @@ jobs:
 
       - name: Terraform Output
         run: terraform output
+
+      - name: Deployment Summary
+        run: |
+          echo "## ✅ Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Region:** us-east-2" >> $GITHUB_STEP_SUMMARY

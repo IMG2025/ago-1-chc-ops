@@ -10,7 +10,7 @@ terraform {
   
   backend "s3" {
     bucket = "coreidentity-terraform-state"
-    key    = "dev/terraform.tfstate"
+    key    = "prod/terraform.tfstate"
     region = "us-east-2"
   }
 }
@@ -21,7 +21,7 @@ provider "aws" {
   default_tags {
     tags = {
       Project     = "CoreIdentity"
-      Environment = "dev"
+      Environment = "prod"
       ManagedBy   = "Terraform"
     }
   }
@@ -29,12 +29,13 @@ provider "aws" {
 
 module "networking" {
   source      = "../../modules/networking"
-  environment = "dev"
+  environment = "prod"
+  vpc_cidr    = "10.1.0.0/16"
 }
 
 module "compute" {
   source                = "../../modules/compute"
-  environment           = "dev"
+  environment           = "prod"
   vpc_id                = module.networking.vpc_id
   private_subnet_ids    = module.networking.private_subnet_ids
   ecs_security_group_id = module.networking.ecs_security_group_id
@@ -42,12 +43,12 @@ module "compute" {
 
 module "database" {
   source      = "../../modules/database"
-  environment = "dev"
+  environment = "prod"
 }
 
 module "storage" {
   source      = "../../modules/storage"
-  environment = "dev"
+  environment = "prod"
 }
 
 output "cluster_name" {
