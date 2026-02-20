@@ -1,0 +1,46 @@
+name: Destroy AWS Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to DESTROY'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+      confirmation:
+        description: 'Type "destroy" to confirm'
+        required: true
+
+env:
+  AWS_REGION: us-east-1
+  TERRAFORM_VERSION: 1.6.0
+
+jobs:
+  destroy:
+    name: Destroy Infrastructure
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirmation == 'destroy'
+    environment: ${{ github.event.inputs.environment }}
+    defaults:
+      run:
+        working-directory: ./aws-infrastructure/environments/${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
