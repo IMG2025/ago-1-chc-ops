@@ -10,7 +10,7 @@ resource "random_password" "db_password" {
 resource "aws_db_instance" "main" {
   identifier           = "coreidentity-${var.environment}"
   engine               = "postgres"
-  engine_version       = "15.5"
+  engine_version       = "16"
   instance_class       = var.environment == "prod" ? "db.t3.small" : "db.t3.micro"
   allocated_storage    = 20
   db_name              = "coreidentity"
