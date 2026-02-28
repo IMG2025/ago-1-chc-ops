@@ -25,3 +25,13 @@ scripts/gate_ci_termux_v1.sh
 
 # Termux gate logs
 .tmp/
+.env.*
+*.tar.gz
+*.zip
+*.backup
+frontend.backup/
+*.pem
+*.key
+*.p12
+.DS_Store
+infrastructure_audit_report_*.md
