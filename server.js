@@ -234,6 +234,11 @@ app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   res.setHeader('Access-Control-Allow-Origin', 'https://portal.coreholdingcorp.com');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+app.use((req, res, next) => {
+  res.removeHeader('Cross-Origin-Resource-Policy');
+  res.removeHeader('Cross-Origin-Opener-Policy');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   next();
 });
