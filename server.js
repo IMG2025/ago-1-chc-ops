@@ -228,3 +228,12 @@ app.post('/api/governance/sync-enhanced', (req, res) => {
 app.get('/api/governance/syncs', (req, res) => {
   res.json({ success: true, count: syncStore.length, data: syncStore.slice(-20).reverse() });
 });
+
+// Final override to defeat security middleware resets
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  res.setHeader('Access-Control-Allow-Origin', 'https://portal.coreholdingcorp.com');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
