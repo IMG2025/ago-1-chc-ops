@@ -21,15 +21,16 @@
     "mcp:smoke21c": "node scripts/mcp_smoke_phase21c.mjs"
   },
   "dependencies": {
+    "@chc/sentinel-core": "*",
     "ago-1-core": "github:IMG2025/ago-1-core#5325ba6",
     "ciag-ago-1": "file:../ciag-ago-1",
-    "hospitality-ago-1": "file:../../hospitality-ago-1",
-    "@chc/sentinel-core": "*"
+    "cors": "^2.8.6",
+    "hospitality-ago-1": "file:../../hospitality-ago-1"
   },
   "devDependencies": {
-    "typescript": "^5.5.4",
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.5.4"
   },
   "exports": {
     "./contracts": {

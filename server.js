@@ -4,6 +4,7 @@
 
 const express = require('express');
 const app = express();
+app.use(require('cors')({ origin: 'https://portal.coreholdingcorp.com', credentials: true })); app.use((req, res, next) => {   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');   res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');   next(); });
 app.use((req, res, next) => {   res.setHeader('Access-Control-Allow-Origin', 'https://portal.coreholdingcorp.com');   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');   res.setHeader('Access-Control-Allow-Credentials', 'true');   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');   if (req.method === 'OPTIONS') return res.sendStatus(200);   next(); });
 app.use((req, res, next) => {   res.setHeader('Access-Control-Allow-Origin', 'https://portal.coreholdingcorp.com');   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');   res.setHeader('Access-Control-Allow-Credentials', 'true');   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');   if (req.method === 'OPTIONS') return res.sendStatus(200);   next(); });
 app.use(express.json());
